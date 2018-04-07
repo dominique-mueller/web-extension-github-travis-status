@@ -4,11 +4,12 @@
     "description": "TODO",
     "manifest_version": 2,
     "permissions": [
-        "https://github.com/*"
+        "*://github.com/*/pull/*",
+        "tabs",
+        "webNavigation"
     ],
     "background": {
         "scripts": [
-            "src/vendor.js",
             "src/background.js"
         ],
         "persistent": false
@@ -16,10 +17,9 @@
     "content_scripts": [
         {
             "matches": [
-                "https://github.com/*/pull/*"
+                "*://github.com/*/pull/*"
             ],
             "js": [
-                "src/vendor.js",
                 "src/content_script.js"
             ]
         }
