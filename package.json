@@ -18,8 +18,15 @@
     },
     "keywords": [],
     "scripts": {
-        "build": "exit 0"
+        "build": "webpack"
     },
     "dependencies": {},
-    "devDependencies": {}
+    "devDependencies": {
+        "clean-webpack-plugin": "0.1.x",
+        "copy-webpack-plugin": "4.5.x",
+        "ts-loader": "4.1.x",
+        "typescript": "2.8.x",
+        "webpack": "4.5.x",
+        "webpack-cli": "2.0.x"
+    }
 }
