@@ -7,12 +7,11 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' )
  * Webpack Production Configuration
  */
 module.exports = {
-    mode: 'production',
     entry: {
-        popup: path.resolve( 'src', 'popup', 'index.ts' ),
-        options: path.resolve( 'src', 'options', 'index.ts' ),
+        background: path.resolve( 'src', 'background', 'index.ts' ),
         content_script: path.resolve( 'src', 'content_script', 'index.ts' ),
-        background: path.resolve( 'src', 'background', 'index.ts' )
+        options: path.resolve( 'src', 'options', 'index.ts' ),
+        popup: path.resolve( 'src', 'popup', 'index.ts' )
     },
     output: {
         path: path.resolve( 'dist', 'src' ),
