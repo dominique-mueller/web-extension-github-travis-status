@@ -1,5 +1,6 @@
 const path = require( 'path' );
 
+const webpack = require( 'webpack' );
 const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' )
 
@@ -37,6 +38,22 @@ module.exports = {
                 from: path.resolve( 'src', 'manifest.json' ),
                 to: path.resolve( 'dist' )
             }
-        ] )
-    ]
+        ] ),
+        new webpack.ProvidePlugin( {
+            browser: 'webextension-polyfill'
+        } )
+    ],
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                default: false,
+                commons: {
+                    test: /node_modules/,
+                    name: 'vendor',
+                    chunks: 'initial',
+                    minSize: 1
+                }
+            }
+        }
+    }
 };

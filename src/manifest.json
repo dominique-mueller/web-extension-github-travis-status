@@ -8,6 +8,7 @@
     ],
     "background": {
         "scripts": [
+            "src/vendor.js",
             "src/background.js"
         ],
         "persistent": false
@@ -18,6 +19,7 @@
                 "https://github.com/*/pull/*"
             ],
             "js": [
+                "src/vendor.js",
                 "src/content_script.js"
             ]
         }

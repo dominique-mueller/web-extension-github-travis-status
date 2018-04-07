@@ -21,12 +21,15 @@
         "build": "webpack --mode production",
         "serve": "webpack --mode development --watch"
     },
-    "dependencies": {},
+    "dependencies": {
+        "webextension-polyfill": "0.2.x"
+    },
     "devDependencies": {
         "clean-webpack-plugin": "0.1.x",
         "copy-webpack-plugin": "4.5.x",
         "ts-loader": "4.1.x",
         "typescript": "2.8.x",
+        "web-ext-types": "2.0.x",
         "webpack": "4.5.x",
         "webpack-cli": "2.0.x"
     }
