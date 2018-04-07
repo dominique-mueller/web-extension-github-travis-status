@@ -7,7 +7,7 @@ console.log( 'RUNNING BACKGROUND!' );
 
 const travisCiClient: TravisCiClient = new TravisCiClient();
 travisCiClient
-    .fetchStages( 360312950 )
+    .fetchBuildStagesWithJobs( 360312950 )
     .then( ( result: TravisCiStages ) => {
         console.log( result );
     } );
