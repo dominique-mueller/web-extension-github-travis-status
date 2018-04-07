@@ -1,4 +1,4 @@
-import { TravisCiStages } from './travis-ci.interfaces';
+import { TravisCiStages, TravisCiStage, TravisCiJob } from './travis-ci.interfaces';
 
 /**
  * Travis CI client
@@ -42,6 +42,17 @@ export class TravisCiClient {
         } )
             .then( ( response: Response ): Promise<TravisCiStages> => {
                 return response.json();
+            } )
+            .then( ( travisCiStages: TravisCiStages ): Promise<TravisCiStages> => {
+                travisCiStages.stages.sort( ( a: TravisCiStage, b: TravisCiStage ): number => {
+                    return a.number - b.number;
+                } );
+                travisCiStages.stages.forEach( ( travisCiStage: TravisCiStage ): void => {
+                    travisCiStage.jobs.sort( ( a: TravisCiJob, b: TravisCiJob ): number => {
+                        return parseFloat( a.number ) - parseFloat( b.number );
+                    } );
+                } );
+                return Promise.resolve( travisCiStages );
             } );
     }
 
