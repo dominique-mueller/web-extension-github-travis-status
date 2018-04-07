@@ -23,7 +23,17 @@ export class TravisCiClient {
         this.apiVersion = 3;
     }
 
-    public fetchStages( buildId: number ): Promise<TravisCiStages> {
+    /**
+     * Fetch build stages incl. jobs
+     *
+     * Documentation:
+     * - Fetching stages: https://developer.travis-ci.org/resource/stages
+     * - Eager loading (here used to load more job info): https://developer.travis-ci.org/eager-loading
+     *
+     * @param buildId - Build ID
+     * @returns       - Promise, resolving with Travis CI stages (incl. jobs)
+     */
+    public fetchBuildStagesWithJobs( buildId: number ): Promise<TravisCiStages> {
         return fetch( `${ this.baseUrl }/build/${ buildId }/stages?include=job.state,job.number,job.started_at,job.finished_at`, {
             method: 'GET',
             headers: new Headers( {
