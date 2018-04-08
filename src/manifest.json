@@ -4,7 +4,7 @@
     "description": "TODO",
     "manifest_version": 2,
     "permissions": [
-        "*://github.com/*/pull/*",
+        "https://github.com/*",
         "tabs",
         "webNavigation"
     ],
@@ -17,7 +17,7 @@
     "content_scripts": [
         {
             "matches": [
-                "*://github.com/*/pull/*"
+                "https://github.com/*/pull/*"
             ],
             "js": [
                 "src/content_script.js"
