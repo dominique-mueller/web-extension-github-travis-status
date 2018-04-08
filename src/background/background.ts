@@ -8,6 +8,15 @@ let contentScriptConnection: chrome.runtime.Port;
 chrome.runtime.onConnect.addListener( ( port: chrome.runtime.Port ): void => {
     if ( port.name = 'content_script' ) {
         contentScriptConnection = port;
+
+        const travisCiClient: TravisCiClient = new TravisCiClient();
+        travisCiClient
+            .fetchBuildStagesWithJobs( 363203151 )
+            .then( ( result: TravisCiStages ) => {
+                console.log( result );
+                contentScriptConnection.postMessage( result );
+            } );
+
     }
 } );
 
@@ -23,10 +32,3 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(
         }
     }
 );
-
-const travisCiClient: TravisCiClient = new TravisCiClient();
-travisCiClient
-    .fetchBuildStagesWithJobs( 360312950 )
-    .then( ( result: TravisCiStages ) => {
-        console.log( result );
-    } );
