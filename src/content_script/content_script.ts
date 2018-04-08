@@ -19,6 +19,8 @@ connectionPort.onMessage.addListener( ( message: any ) => {
 
     statusItems.forEach( ( statusItem: HTMLDivElement ) => {
 
+        statusItem.classList.add( 'ext__status' );
+
         const mergeStatusItemDetails: HTMLDivElement = document.createElement( 'div' );
         mergeStatusItemDetails.classList.add( 'merge-status-item', 'ext__details' );
 
@@ -29,17 +31,44 @@ connectionPort.onMessage.addListener( ( message: any ) => {
         const stagesList: HTMLUListElement = document.createElement( 'ul' );
         stagesList.classList.add( 'ext__stages' );
         message.stages.forEach( ( stage: any ) => {
+
             const stageElement: HTMLLIElement = document.createElement( 'li' );
             stageElement.classList.add( 'ext__stage' );
-            stageElement.innerText = `[${ stage.state }] ${ stage.name }`;
+
+            const stageDetailsElement: HTMLDivElement = document.createElement( 'div' );
+            stageElement.appendChild( stageDetailsElement );
+
+            const stageNameElement: HTMLElement = document.createElement( 'strong' );
+            stageNameElement.innerText = `[${ stage.state.toUpperCase() }] ${ stage.name }`;
+            stageNameElement.classList.add( 'text-emphasized' );
+            stageDetailsElement.appendChild( stageNameElement );
 
             const jobList: HTMLUListElement = document.createElement( 'ul' );
             jobList.classList.add( 'ext__jobs' );
             stage.jobs.forEach( ( job: any ) => {
+
                 const jobElement: HTMLLIElement = document.createElement( 'li' );
-                jobElement.classList.add( 'ext__job' );
-                jobElement.innerText = `[${ job.state }] ${ job.number }`;
+                jobElement.classList.add( 'd-flex', 'ext__job' );
+
+                const jobNameElement: HTMLSpanElement = document.createElement( 'span' );
+                jobNameElement.innerText = `[${ job.state.toUpperCase() }] #${ job.number }`;
+                jobElement.appendChild( jobNameElement );
+
+                const jobTimeElement: HTMLSpanElement = document.createElement( 'span' );
+                jobTimeElement.classList.add( 'label', 'Label--gray', 'ext__job-time' )
+                const jobTime: number = ( ( new Date( job.finished_at ) ).getTime() - ( new Date( job.started_at ) ).getTime() ) / 1000;
+                const jobTimeMinutes = Math.floor( jobTime / 60 );
+                const jobTimeSeconds = jobTime - jobTimeMinutes * 60;
+                jobTimeElement.innerText = `${ jobTimeMinutes } min ${ jobTimeSeconds } sec`;
+                jobElement.appendChild( jobTimeElement );
+
+                const jobDetailsLinkElement: HTMLAnchorElement = document.createElement( 'a' );
+                jobDetailsLinkElement.href = '#';
+                jobDetailsLinkElement.innerText = 'View log';
+                jobElement.appendChild( jobDetailsLinkElement );
+
                 jobList.appendChild( jobElement );
+
             } );
 
             stageElement.appendChild( jobList );

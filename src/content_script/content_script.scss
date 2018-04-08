@@ -9,9 +9,13 @@
         padding: 0 !important;
 
         &-content {
-            padding: 10px 15px 10px 52px;
+            padding: 10px 15px 20px 52px;
         }
 
+    }
+
+    &__status {
+        border-bottom: none !important;
     }
 
     &__stages {
@@ -33,12 +37,28 @@
     }
 
     &__job {
-        padding: 7px 10px;
+        justify-content: space-between;
+        padding: 8px 15px;
         border: 1px solid #e1e4e8;
-        border-radius: 3px;
+        background-color: #FFF;
 
         & + & {
-            margin-top: 5px;
+            border-top: none;
+        }
+
+        &:first-child {
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+
+        &:last-child {
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+        }
+
+        &-time {
+            margin-left: auto;
+            margin-right: 15px;
         }
 
     }
