@@ -55,10 +55,13 @@ connectionPort.onMessage.addListener( ( message: any ) => {
                 jobElement.appendChild( jobNameElement );
 
                 const jobTimeElement: HTMLSpanElement = document.createElement( 'span' );
-                jobTimeElement.classList.add( 'label', 'Label--gray', 'ext__job-time' )
+                jobTimeElement.classList.add( 'label', 'Label--gray', 'ext__job-time' );
+
+                // See: https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds
                 const jobTime: number = ( ( new Date( job.finished_at ) ).getTime() - ( new Date( job.started_at ) ).getTime() ) / 1000;
                 const jobTimeMinutes = Math.floor( jobTime / 60 );
                 const jobTimeSeconds = jobTime - jobTimeMinutes * 60;
+
                 jobTimeElement.innerText = `${ jobTimeMinutes } min ${ jobTimeSeconds } sec`;
                 jobElement.appendChild( jobTimeElement );
 
