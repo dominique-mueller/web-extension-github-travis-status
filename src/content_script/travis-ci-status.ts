@@ -14,7 +14,7 @@ export class TravisCiStatus {
     /**
      * Build ID
      */
-    public readonly buildId: string;
+    public readonly buildId: number;
 
     /**
      * List of status details links (DOM elements)
@@ -123,12 +123,12 @@ export class TravisCiStatus {
 
         // Stage heading
         const stageHeadingElement: HTMLDivElement = document.createElement( 'div' );
-        stageHeadingElement.classList.add( 'extension__stage-heading', 'd-flex' );
+        stageHeadingElement.classList.add( 'extension__stage-heading', 'd-flex', 'flex-items-baseline' );
         stageElement.appendChild( stageHeadingElement );
 
         // Stage status
-        const stageStatusElement: HTMLSpanElement = document.createElement( 'span' );
-        stageStatusElement.classList.add( 'extension__stage-status' );
+        const stageStatusElement: HTMLDivElement = document.createElement( 'div' );
+        stageStatusElement.classList.add( 'extension__stage-status', 'flex-self-center' );
         this.addTooltipToElement( stageStatusElement, `Stage "${ stage.name }" ${ stage.state }` );
         stageHeadingElement.appendChild( stageStatusElement );
 
@@ -186,11 +186,11 @@ export class TravisCiStatus {
 
         // Job
         const jobElement: HTMLLIElement = document.createElement( 'li' );
-        jobElement.classList.add( 'extension__job', 'd-flex' );
+        jobElement.classList.add( 'extension__job', 'd-flex', 'flex-items-baseline' );
 
         // Job status
-        const jobStatusElement: HTMLSpanElement = document.createElement( 'span' );
-        jobStatusElement.classList.add( 'extension__job-status' );
+        const jobStatusElement: HTMLDivElement = document.createElement( 'div' );
+        jobStatusElement.classList.add( 'extension__job-status', 'flex-self-center' );
         this.addTooltipToElement( jobStatusElement, `Job #${ job.number } ${ job.state }` );
         jobElement.appendChild( jobStatusElement );
 
@@ -219,7 +219,8 @@ export class TravisCiStatus {
 
         // Job link
         const jobLinkElement: HTMLAnchorElement = document.createElement( 'a' );
-        jobLinkElement.href = '#'; // TODO: Create link + query params
+        jobLinkElement.href = this.getJobUrl( this.buildUrl, job.id );
+        jobLinkElement.target = '_blank';
         jobLinkElement.innerText = 'View log';
         jobElement.appendChild( jobLinkElement );
 
@@ -273,16 +274,29 @@ export class TravisCiStatus {
             } );
     }
 
+    private getJobUrl( buildUrl: string, jobId: number ): string {
+        const [ buildUrlWithoutQueryParams, queryParams ]: Array<string> = buildUrl.split( '?' );
+        const jobUrl: string = buildUrlWithoutQueryParams
+            .split( '/' )
+            .slice( 0, 5 )
+            .concat( 'jobs', jobId.toString() )
+            .join( '/' );
+        return queryParams ? `${ jobUrl }?${ queryParams }` : jobUrl;
+    }
+
     /**
      * Get build ID
      *
      * @param buildUrl - Build URL
      */
-    private getBuildId( buildUrl: string ): string {
-        return buildUrl
-            .split( '?' )[ 0 ]
-            .split( '/' )
-            .slice( -1 )[ 0 ];
+    private getBuildId( buildUrl: string ): number {
+        return parseInt(
+            buildUrl
+                .split( '?' )[ 0 ]
+                .split( '/' )
+                .slice( -1 )[ 0 ],
+            10
+        );
     }
 
 }

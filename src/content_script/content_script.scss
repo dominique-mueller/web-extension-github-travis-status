@@ -14,9 +14,9 @@
     }
 
     &__icon {
+        display: block;
         height: 16px;
         width: auto;
-        margin-top: 1px;
 
         &--canceled {
             fill: #eaecef;
@@ -58,6 +58,7 @@
 
         &-status {
             cursor: help;
+            margin-left: -3px;
         }
 
         &-name {
@@ -67,7 +68,7 @@
     }
 
     &__jobs {
-        margin-top: 10px;
+        margin-top: 8px;
         list-style-type: none;
     }
 
@@ -101,6 +102,8 @@
         &-runtime {
             margin-left: auto;
             margin-right: 15px;
+            padding-right: 5px;
+            padding-left: 5px;
         }
 
     }
