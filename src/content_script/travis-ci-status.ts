@@ -49,6 +49,26 @@ export class TravisCiStatus {
         };
     }
 
+    public createDetailsDropdown( statusItem: HTMLDivElement ): void {
+
+        // Button
+        const buttonElement: HTMLButtonElement = document.createElement( 'button' );
+        buttonElement.type = 'button';
+        buttonElement.classList.add( 'label', 'Label--gray', 'extension__button' );
+
+        // Button icon
+        const buttonIconElement: SVGElement = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+        buttonIconElement.classList.add( 'extension__icon', 'extension__icon--collapse' );
+        buttonIconElement.setAttribute( 'viewBox', '0 0 12 16' );
+        buttonIconElement.setAttribute( 'width', '12' );
+        buttonIconElement.setAttribute( 'height', '10' );
+        buttonIconElement.innerHTML = octicons.chevronDown;
+        buttonElement.appendChild( buttonIconElement );
+
+        statusItem.lastElementChild.previousElementSibling.appendChild( buttonElement );
+
+    }
+
     /**
      * Enhance Travis CI status
      *
@@ -62,6 +82,11 @@ export class TravisCiStatus {
         // Append status information to document, cloned
         this.statusItems.forEach( ( statusItem: HTMLDivElement ): void => {
             statusItem.parentElement.insertBefore( statusDetailsFragment.cloneNode( true ), statusItem.nextElementSibling );
+
+            this.createDetailsDropdown( statusItem ); // TODO: ...
+
+            statusItem.parentElement.style.maxHeight = '500px';
+
         } );
 
     }

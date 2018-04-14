@@ -1,16 +1,16 @@
 .extension {
 
-    // &__button {
-    //     border: none;
-    //     margin-right: 16px;
-    // }
-
-    // &__status {
-    //     border-bottom: none !important;
-    // }
+    &__button {
+        border: none;
+        margin-right: 15px;
+        float: right;
+        padding: 1px 0 1px 2px !important;
+        cursor: pointer;
+    }
 
     &__details {
         padding: 0 !important;
+        margin-top: -1px;
     }
 
     &__icon {
@@ -40,6 +40,10 @@
 
         &--started {
             fill: #dbab09;
+        }
+
+        &--collapse {
+            fill: #586069;
         }
 
     }
@@ -73,7 +77,7 @@
     }
 
     &__job {
-        padding: 8px 10px;
+        padding: 8px 13px 8px 10px;
         border: 1px solid #e1e4e8;
         background-color: #FFF;
 
