@@ -210,11 +210,11 @@ export class TravisCiStatus {
         jobNumberElement.innerText = `#${ job.number }`;
         jobElement.appendChild( jobNumberElement );
 
-        // Job runtime
+        // Job runtime (similar to Travis CI)
         const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateJobRuntime( job.started_at, job.finished_at );
         const jobRuntimeElement: HTMLSpanElement = document.createElement( 'span' );
         jobRuntimeElement.classList.add( 'label', 'Label--gray', 'extension__job-runtime' );
-        jobRuntimeElement.innerText = `${ jobMinutes } min ${ jobSeconds } sec`; // Similar to how Travis CI displays the runtime
+        jobRuntimeElement.innerHTML = `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`;
         jobElement.appendChild( jobRuntimeElement );
 
         // Job link
