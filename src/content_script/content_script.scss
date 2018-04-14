@@ -56,6 +56,10 @@
             margin-top: 15px;
         }
 
+        &-status {
+            cursor: help;
+        }
+
         &-name {
             margin-left: 8px;
         }
@@ -84,6 +88,10 @@
         &:last-child {
             border-bottom-left-radius: 3px;
             border-bottom-right-radius: 3px;
+        }
+
+        &-status {
+            cursor: help;
         }
 
         &-number {

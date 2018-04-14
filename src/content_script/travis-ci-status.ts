@@ -126,6 +126,12 @@ export class TravisCiStatus {
         stageHeadingElement.classList.add( 'extension__stage-heading', 'd-flex' );
         stageElement.appendChild( stageHeadingElement );
 
+        // Stage status
+        const stageStatusElement: HTMLSpanElement = document.createElement( 'span' );
+        stageStatusElement.classList.add( 'extension__stage-status' );
+        this.addTooltipToElement( stageStatusElement, `Stage "${ stage.name }" ${ stage.state }` );
+        stageHeadingElement.appendChild( stageStatusElement );
+
         // Stage status icon
         const stageStatusIconElement: SVGElement = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
         stageStatusIconElement.classList.add( 'extension__icon', `extension__icon--${ stage.state }` );
@@ -133,7 +139,7 @@ export class TravisCiStatus {
         stageStatusIconElement.setAttribute( 'width', '12' );
         stageStatusIconElement.setAttribute( 'height', '10' );
         stageStatusIconElement.innerHTML = this.stateIcons[ stage.state ];
-        stageHeadingElement.appendChild( stageStatusIconElement );
+        stageStatusElement.appendChild( stageStatusIconElement );
 
         // Stage name
         const stageNameElement: HTMLElement = document.createElement( 'strong' );
@@ -182,6 +188,12 @@ export class TravisCiStatus {
         const jobElement: HTMLLIElement = document.createElement( 'li' );
         jobElement.classList.add( 'extension__job', 'd-flex' );
 
+        // Job status
+        const jobStatusElement: HTMLSpanElement = document.createElement( 'span' );
+        jobStatusElement.classList.add( 'extension__job-status' );
+        this.addTooltipToElement( jobStatusElement, `Job #${ job.number } ${ job.state }` );
+        jobElement.appendChild( jobStatusElement );
+
         // Job icon
         const jobStatusIconElement: SVGElement = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
         jobStatusIconElement.classList.add( 'extension__icon', `extension__icon--${ job.state }` );
@@ -189,7 +201,7 @@ export class TravisCiStatus {
         jobStatusIconElement.setAttribute( 'width', '12' );
         jobStatusIconElement.setAttribute( 'height', '10' );
         jobStatusIconElement.innerHTML = this.stateIcons[ job.state ];
-        jobElement.appendChild( jobStatusIconElement );
+        jobStatusElement.appendChild( jobStatusIconElement );
 
         // Job name (number)
         const jobNumberElement: HTMLElement = document.createElement( 'strong' );
@@ -213,6 +225,17 @@ export class TravisCiStatus {
 
         return jobElement;
 
+    }
+
+    /**
+     * Add tooltip to element
+     *
+     * @param element     - Element
+     * @param tooltipText - Tooltip tex
+     */
+    private addTooltipToElement( element: HTMLElement, tooltipText: string ): void {
+        element.classList.add( 'tooltipped', 'tooltipped-n' );
+        element.setAttribute( 'aria-label', tooltipText );
     }
 
     /**
