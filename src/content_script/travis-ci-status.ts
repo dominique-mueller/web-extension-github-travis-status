@@ -24,7 +24,7 @@ export class TravisCiStatus {
     /**
      * List of status items (DOM elements)
      */
-    private readonly statusItems: Array<HTMLDivElement>;
+    private readonly statusItemElements: Array<HTMLDivElement>;
 
     /**
      * Status
@@ -36,7 +36,7 @@ export class TravisCiStatus {
      */
     constructor() {
         this.statusDetailsLinks = this.getStatusDetailsLinks();
-        this.statusItems = this.getStatusItems( this.statusDetailsLinks );
+        this.statusItemElements = this.getStatusItems( this.statusDetailsLinks );
         this.buildUrl = this.statusDetailsLinks[ 0 ].href;
         this.buildId = this.getBuildId( this.buildUrl );
         this.stateIcons = {
@@ -49,12 +49,74 @@ export class TravisCiStatus {
         };
     }
 
-    public createDetailsDropdown( statusItem: HTMLDivElement ): void {
+    /**
+     * Enhance Travis CI status
+     *
+     * @param stagesWithJobs - Stages with jobs
+     */
+    public enhanceTravisCiStatus( stagesWithJobs: Array<TravisCiStage> ): void {
+
+        // Create elements
+        const statusDetailsElement: HTMLDivElement = this.createStatusDetailsElement( stagesWithJobs );
+        const collapseButtonElement: HTMLButtonElement = this.createCollapseButton();
+
+        // Append status information to document, cloned
+        this.statusItemElements.forEach( ( statusItemElement: HTMLDivElement ): void => {
+
+            // Clone elements
+            const statusDetailsElementCloned: HTMLDivElement = <HTMLDivElement> statusDetailsElement.cloneNode( true );
+            const collapseButtonElementCloned: HTMLButtonElement = <HTMLButtonElement> collapseButtonElement.cloneNode( true );
+
+            // Insert into DOM
+            statusItemElement.parentElement.insertBefore( statusDetailsElementCloned, statusItemElement.nextElementSibling );
+            statusItemElement.lastElementChild.previousElementSibling.appendChild( collapseButtonElementCloned );
+
+            this.setupCollapseButtonEventListeners( statusItemElement, statusDetailsElementCloned, collapseButtonElementCloned );
+
+            // TODO: Temporary!!
+            // statusItemElement.parentElement.style.maxHeight = '500px';
+
+        } );
+
+    }
+
+    private setupCollapseButtonEventListeners( statusItemElement: HTMLDivElement, statusDetailsElement: HTMLDivElement,
+        collapseButtonElement: HTMLButtonElement ): void {
+
+        // Calculate dimensions, once (#perfmatters)
+        const expandedHeight: number = statusDetailsElement.firstElementChild.getBoundingClientRect().height + 1; // + 1px border
+        const expandedHeightPx: string = `${ expandedHeight }px`;
+        const collapsedHeight: number = 0;
+        const collapsedHeightPx: string = `${ collapsedHeight }px`;
+        const mergeStatusListExpandedHeight: number = expandedHeight + 215;
+        const mergeStatusListExpandedHeightPx: string = `${ mergeStatusListExpandedHeight }px`;
+
+        // Setup event listeners
+        collapseButtonElement.addEventListener( 'click', () => {
+            collapseButtonElement.classList.toggle( 'is-active' );
+            if ( statusDetailsElement.style.maxHeight === collapsedHeightPx ) {
+                statusDetailsElement.style.maxHeight = expandedHeightPx
+                statusItemElement.parentElement.style.maxHeight = mergeStatusListExpandedHeightPx
+            } else {
+                statusDetailsElement.style.maxHeight = collapsedHeightPx
+                statusItemElement.parentElement.style.maxHeight = ''; // Reset
+            }
+        } );
+
+    }
+
+    /**
+     * Create collapse button
+     *
+     * @returns - Button DOM element
+     */
+    private createCollapseButton(): HTMLButtonElement {
 
         // Button
         const buttonElement: HTMLButtonElement = document.createElement( 'button' );
         buttonElement.type = 'button';
         buttonElement.classList.add( 'label', 'Label--gray', 'extension__button' );
+        // buttonElement.innerText = 'Details';
 
         // Button icon
         const buttonIconElement: SVGElement = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
@@ -65,29 +127,7 @@ export class TravisCiStatus {
         buttonIconElement.innerHTML = octicons.chevronDown;
         buttonElement.appendChild( buttonIconElement );
 
-        statusItem.lastElementChild.previousElementSibling.appendChild( buttonElement );
-
-    }
-
-    /**
-     * Enhance Travis CI status
-     *
-     * @param stagesWithJobs - Stages with jobs
-     */
-    public enhanceTravisCiStatus( stagesWithJobs: Array<TravisCiStage> ): void {
-
-        // Create status details fragment, once
-        const statusDetailsFragment: DocumentFragment = this.createStatusDetailsFragment( stagesWithJobs );
-
-        // Append status information to document, cloned
-        this.statusItems.forEach( ( statusItem: HTMLDivElement ): void => {
-            statusItem.parentElement.insertBefore( statusDetailsFragment.cloneNode( true ), statusItem.nextElementSibling );
-
-            this.createDetailsDropdown( statusItem ); // TODO: ...
-
-            statusItem.parentElement.style.maxHeight = '500px';
-
-        } );
+        return buttonElement;
 
     }
 
@@ -95,20 +135,20 @@ export class TravisCiStatus {
      * Create status details document fragment
      *
      * @param   stages - Stages
-     * @returns        - Document fragment
+     * @returns        - Merge status details DOM element
      */
-    private createStatusDetailsFragment( stages: Array<TravisCiStage> ): DocumentFragment {
+    private createStatusDetailsElement( stages: Array<TravisCiStage> ): HTMLDivElement {
 
-        const fragment: DocumentFragment = document.createDocumentFragment();
-
-        // Create additional status item elements
+        // Create extended merge status
         const statusItemElement: HTMLDivElement = document.createElement( 'div' );
         statusItemElement.classList.add( 'merge-status-item', 'extension__details' );
+        statusItemElement.style.maxHeight = '0px';
+
+        // Create stages
         const stagesElement: HTMLUListElement = this.createStagesElement( stages );
         statusItemElement.appendChild( stagesElement );
 
-        fragment.appendChild( statusItemElement );
-        return fragment;
+        return statusItemElement;
 
     }
 
@@ -154,7 +194,7 @@ export class TravisCiStatus {
         // Stage status
         const stageStatusElement: HTMLDivElement = document.createElement( 'div' );
         stageStatusElement.classList.add( 'extension__stage-status', 'flex-self-center' );
-        this.addTooltipToElement( stageStatusElement, `Stage "${ stage.name }" ${ stage.state }` );
+        this.addTooltipToElement( stageStatusElement, stage.state );
         stageHeadingElement.appendChild( stageStatusElement );
 
         // Stage status icon
@@ -216,7 +256,7 @@ export class TravisCiStatus {
         // Job status
         const jobStatusElement: HTMLDivElement = document.createElement( 'div' );
         jobStatusElement.classList.add( 'extension__job-status', 'flex-self-center' );
-        this.addTooltipToElement( jobStatusElement, `Job #${ job.number } ${ job.state }` );
+        this.addTooltipToElement( jobStatusElement, job.state );
         jobElement.appendChild( jobStatusElement );
 
         // Job icon
@@ -260,7 +300,7 @@ export class TravisCiStatus {
      * @param tooltipText - Tooltip tex
      */
     private addTooltipToElement( element: HTMLElement, tooltipText: string ): void {
-        element.classList.add( 'tooltipped', 'tooltipped-n' );
+        element.classList.add( 'tooltipped', 'tooltipped-e' );
         element.setAttribute( 'aria-label', tooltipText );
     }
 

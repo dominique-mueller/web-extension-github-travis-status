@@ -6,11 +6,23 @@
         float: right;
         padding: 1px 0 1px 2px !important;
         cursor: pointer;
+
+        .extension__icon {
+            transform: rotateX( 0 );
+            transition: transform .25s ease-in-out; // Same as GitHub uses
+        }
+
+        &.is-active > .extension__icon {
+            transform: rotateX( 180deg );
+        }
+
     }
 
     &__details {
         padding: 0 !important;
         margin-top: -1px;
+        overflow: hidden;
+        transition: max-height .25s ease-in-out; // Same as GitHub uses
     }
 
     &__icon {
@@ -61,12 +73,15 @@
         }
 
         &-status {
+            position: relative;
+            left: -3px;
+            margin: -4px; // Increase hover-able area for better tooltip usability
+            padding: 4px;
             cursor: help;
-            margin-left: -3px;
         }
 
         &-name {
-            margin-left: 7px;
+            margin-left: 3px;
         }
 
     }
@@ -96,6 +111,8 @@
         }
 
         &-status {
+            margin: -4px; // Increase hover-able area for better tooltip usability
+            padding: 4px;
             cursor: help;
         }
 
