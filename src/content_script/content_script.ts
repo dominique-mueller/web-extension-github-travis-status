@@ -11,9 +11,11 @@ const connectionPort: chrome.runtime.Port = chrome.runtime.connect( {
 } );
 connectionPort.onMessage.addListener( ( message: any ) => {
 
-    console.log( message );
+    const mergeStatusItem: HTMLDivElement = <HTMLDivElement> document
+        .querySelector( '.mergeability-details a.status-actions[href^="https://travis-ci.org/"]' )
+        .closest( 'div.merge-status-item' );
 
-    const travisCiStatus: TravisCiStatus = new TravisCiStatus();
+    const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
     travisCiStatus.enhanceTravisCiStatus( message.stages );
 
 } );

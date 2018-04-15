@@ -7,38 +7,47 @@ import { octicons } from './octicons';
 export class TravisCiStatus {
 
     /**
-     * Build URL
-     */
-    public readonly buildUrl: string;
-
-    /**
      * Build ID
      */
-    public readonly buildId: number;
+    private readonly buildId: number;
 
     /**
-     * List of status details links (DOM elements)
+     * Travis CI project URL
      */
-    private readonly statusDetailsLinks: Array<HTMLAnchorElement>;
+    private readonly travisCiProjectUrl: string;
 
     /**
-     * List of status items (DOM elements)
+     * Travis CI link query params
      */
-    private readonly statusItemElements: Array<HTMLDivElement>;
+    private readonly travisCiLinkQueryParams: string;
 
     /**
-     * Status
+     * Status item element
+     */
+    private readonly statusItemElement: HTMLDivElement;
+
+    /**
+     * State icons (state -> SVG path)
      */
     private readonly stateIcons: { [ status: string ]: string };
 
     /**
      * Constructor
+     *
+     * @param statusItemElement - Status item element to enhance
      */
-    constructor() {
-        this.statusDetailsLinks = this.getStatusDetailsLinks();
-        this.statusItemElements = this.getStatusItems( this.statusDetailsLinks );
-        this.buildUrl = this.statusDetailsLinks[ 0 ].href;
-        this.buildId = this.getBuildId( this.buildUrl );
+    constructor( statusItemElement: HTMLDivElement ) {
+        this.statusItemElement = statusItemElement;
+
+        // Get URLs
+        const [ urlWithoutQueryParams, queryParams ]: Array<string> =
+            ( <HTMLAnchorElement> this.statusItemElement.querySelector( 'a.status-actions[href^="https://travis-ci.org/"]' ) )
+                .href
+                .split( '?' );
+        this.travisCiLinkQueryParams = queryParams;
+        this.travisCiProjectUrl = urlWithoutQueryParams.split( '/' ).slice( 0, 5 ).join( '/' );
+        this.buildId = parseInt( urlWithoutQueryParams.split( '/' ).slice( -1 )[ 0 ], 10 );
+
         this.stateIcons = {
             canceled: octicons.circleSlash,
             created: octicons.primitiveDot,
@@ -60,28 +69,22 @@ export class TravisCiStatus {
         const statusDetailsElement: HTMLDivElement = this.createStatusDetailsElement( stagesWithJobs );
         const collapseButtonElement: HTMLButtonElement = this.createCollapseButton();
 
-        // Append status information to document, cloned
-        this.statusItemElements.forEach( ( statusItemElement: HTMLDivElement ): void => {
+        // Insert into DOM
+        this.statusItemElement.parentElement.insertBefore( statusDetailsElement, this.statusItemElement.nextElementSibling );
+        this.statusItemElement.lastElementChild.previousElementSibling.appendChild( collapseButtonElement );
 
-            // Clone elements
-            const statusDetailsElementCloned: HTMLDivElement = <HTMLDivElement> statusDetailsElement.cloneNode( true );
-            const collapseButtonElementCloned: HTMLButtonElement = <HTMLButtonElement> collapseButtonElement.cloneNode( true );
-
-            // Insert into DOM
-            statusItemElement.parentElement.insertBefore( statusDetailsElementCloned, statusItemElement.nextElementSibling );
-            statusItemElement.lastElementChild.previousElementSibling.appendChild( collapseButtonElementCloned );
-
-            this.setupCollapseButtonEventListeners( statusItemElement, statusDetailsElementCloned, collapseButtonElementCloned );
-
-            // TODO: Temporary!!
-            // statusItemElement.parentElement.style.maxHeight = '500px';
-
-        } );
+        // Setup event listeners
+        this.setupCollapseButtonEventListeners( statusDetailsElement, collapseButtonElement );
 
     }
 
-    private setupCollapseButtonEventListeners( statusItemElement: HTMLDivElement, statusDetailsElement: HTMLDivElement,
-        collapseButtonElement: HTMLButtonElement ): void {
+    /**
+     * Setup collapse button event listeners
+     *
+     * @param statusDetailsElement  - Status details element
+     * @param collapseButtonElement - Collapse button element
+     */
+    private setupCollapseButtonEventListeners( statusDetailsElement: HTMLDivElement, collapseButtonElement: HTMLButtonElement ): void {
 
         // Calculate dimensions, once (#perfmatters)
         const expandedHeight: number = statusDetailsElement.firstElementChild.getBoundingClientRect().height + 1; // + 1px border
@@ -96,10 +99,10 @@ export class TravisCiStatus {
             collapseButtonElement.classList.toggle( 'is-active' );
             if ( statusDetailsElement.style.maxHeight === collapsedHeightPx ) {
                 statusDetailsElement.style.maxHeight = expandedHeightPx
-                statusItemElement.parentElement.style.maxHeight = mergeStatusListExpandedHeightPx
+                this.statusItemElement.parentElement.style.maxHeight = mergeStatusListExpandedHeightPx
             } else {
                 statusDetailsElement.style.maxHeight = collapsedHeightPx
-                statusItemElement.parentElement.style.maxHeight = ''; // Reset
+                this.statusItemElement.parentElement.style.maxHeight = ''; // Reset
             }
         } );
 
@@ -284,7 +287,7 @@ export class TravisCiStatus {
 
         // Job link
         const jobLinkElement: HTMLAnchorElement = document.createElement( 'a' );
-        jobLinkElement.href = this.getJobUrl( this.buildUrl, job.id );
+        jobLinkElement.href = `${ [ this.travisCiProjectUrl, 'jobs', job.id.toString() ].join( '/' ) }${ this.travisCiLinkQueryParams }`;
         jobLinkElement.target = '_blank';
         jobLinkElement.innerText = 'View log';
         jobElement.appendChild( jobLinkElement );
@@ -318,50 +321,6 @@ export class TravisCiStatus {
         const runtimeInMinutes: number = Math.floor( runtime / 60 );
         const runtimeInSeconds: number = runtime - runtimeInMinutes * 60;
         return [ runtimeInMinutes, runtimeInSeconds ];
-    }
-
-    /**
-     * Get status details links
-     */
-    private getStatusDetailsLinks(): Array<HTMLAnchorElement> {
-        return Array.from( document.querySelectorAll( 'a.status-actions[href^="https://travis-ci.org/"]' ) );
-    }
-
-    /**
-     * Get status items
-     *
-     * @param statusDetailsLinks - Status details links
-     */
-    private getStatusItems( statusDetailsLinks: Array<HTMLAnchorElement> ): Array<HTMLDivElement> {
-        return statusDetailsLinks
-            .map( ( statusDetailsLink: HTMLAnchorElement ): HTMLDivElement => {
-                return <HTMLDivElement>statusDetailsLink.closest( 'div.merge-status-item' );
-            } );
-    }
-
-    private getJobUrl( buildUrl: string, jobId: number ): string {
-        const [ buildUrlWithoutQueryParams, queryParams ]: Array<string> = buildUrl.split( '?' );
-        const jobUrl: string = buildUrlWithoutQueryParams
-            .split( '/' )
-            .slice( 0, 5 )
-            .concat( 'jobs', jobId.toString() )
-            .join( '/' );
-        return queryParams ? `${ jobUrl }?${ queryParams }` : jobUrl;
-    }
-
-    /**
-     * Get build ID
-     *
-     * @param buildUrl - Build URL
-     */
-    private getBuildId( buildUrl: string ): number {
-        return parseInt(
-            buildUrl
-                .split( '?' )[ 0 ]
-                .split( '/' )
-                .slice( -1 )[ 0 ],
-            10
-        );
     }
 
 }
