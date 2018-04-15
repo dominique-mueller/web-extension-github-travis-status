@@ -12,6 +12,13 @@ export class TravisCiStatus {
     public readonly buildId: number;
 
     /**
+     * Active status details node
+     */
+    private activeStatusDetailsNode: HTMLDivElement;
+
+    private isVisible: boolean;
+
+    /**
      * Travis CI project URL
      */
     private readonly travisCiProjectUrl: string;
@@ -38,6 +45,7 @@ export class TravisCiStatus {
      */
     constructor( statusItemElement: HTMLDivElement ) {
         this.statusItemElement = statusItemElement;
+        this.isVisible = false;
 
         // Get URLs
         const [ urlWithoutQueryParams, queryParams ]: Array<string> =
@@ -67,15 +75,26 @@ export class TravisCiStatus {
 
         // Create elements
         const statusDetailsElement: HTMLDivElement = this.createStatusDetailsElement( stagesWithJobs );
-        const collapseButtonElement: HTMLButtonElement = this.createCollapseButton();
+        if ( !this.isVisible ) {
+            statusDetailsElement.style.maxHeight = '0px';
+        }
 
         // Insert into DOM
-        this.statusItemElement.parentElement.insertBefore( statusDetailsElement, this.statusItemElement.nextElementSibling );
+        if ( this.activeStatusDetailsNode ) {
+            this.activeStatusDetailsNode.remove();
+        }
+        this.activeStatusDetailsNode =
+            this.statusItemElement.parentElement.insertBefore( statusDetailsElement, this.statusItemElement.nextElementSibling );
+
+    }
+
+    /**
+     * Add collapse button
+     */
+    public addCollapseButton(): void {
+        const collapseButtonElement: HTMLButtonElement = this.createCollapseButton();
         this.statusItemElement.lastElementChild.previousElementSibling.appendChild( collapseButtonElement );
-
-        // Setup event listeners
-        this.setupCollapseButtonEventListeners( statusDetailsElement, collapseButtonElement );
-
+        this.setupCollapseButtonEventListeners( collapseButtonElement );
     }
 
     /**
@@ -84,10 +103,10 @@ export class TravisCiStatus {
      * @param statusDetailsElement  - Status details element
      * @param collapseButtonElement - Collapse button element
      */
-    private setupCollapseButtonEventListeners( statusDetailsElement: HTMLDivElement, collapseButtonElement: HTMLButtonElement ): void {
+    private setupCollapseButtonEventListeners( collapseButtonElement: HTMLButtonElement ): void {
 
         // Calculate dimensions, once (#perfmatters)
-        const expandedHeight: number = statusDetailsElement.firstElementChild.getBoundingClientRect().height + 1; // + 1px border
+        const expandedHeight: number = this.activeStatusDetailsNode.firstElementChild.getBoundingClientRect().height + 1; // + 1px border
         const expandedHeightPx: string = `${ expandedHeight }px`;
         const collapsedHeight: number = 0;
         const collapsedHeightPx: string = `${ collapsedHeight }px`;
@@ -96,12 +115,14 @@ export class TravisCiStatus {
 
         // Setup event listeners for the collapse button
         collapseButtonElement.addEventListener( 'click', () => {
-            if ( statusDetailsElement.style.maxHeight === collapsedHeightPx ) {
-                statusDetailsElement.style.maxHeight = expandedHeightPx;
+            if ( this.activeStatusDetailsNode.style.maxHeight === collapsedHeightPx ) {
+                this.isVisible = true;
+                this.activeStatusDetailsNode.style.maxHeight = expandedHeightPx;
                 this.statusItemElement.parentElement.style.maxHeight = mergeStatusListExpandedHeightPx;
                 collapseButtonElement.classList.add( 'is-active' );
             } else {
-                statusDetailsElement.style.maxHeight = collapsedHeightPx;
+                this.isVisible = false;
+                this.activeStatusDetailsNode.style.maxHeight = collapsedHeightPx;
                 this.statusItemElement.parentElement.style.maxHeight = ''; // Reset
                 collapseButtonElement.classList.remove( 'is-active' );
             }
@@ -113,7 +134,8 @@ export class TravisCiStatus {
             .querySelector( 'button.js-details-target' );
         statusesToggleButtonElement.addEventListener( 'click', () => {
             if ( statusesToggleButtonElement.getAttribute( 'aria-expanded' ) === true.toString() ) {
-                statusDetailsElement.style.maxHeight = collapsedHeightPx;
+                this.isVisible = false;
+                this.activeStatusDetailsNode.style.maxHeight = collapsedHeightPx;
                 this.statusItemElement.parentElement.style.maxHeight = ''; // Reset
                 collapseButtonElement.classList.remove( 'is-active' );
             }
@@ -158,7 +180,6 @@ export class TravisCiStatus {
         // Create extended merge status
         const statusItemElement: HTMLDivElement = document.createElement( 'div' );
         statusItemElement.classList.add( 'merge-status-item', 'extension__details' );
-        statusItemElement.style.maxHeight = '0px';
 
         // Create stages
         const stagesElement: HTMLUListElement = this.createStagesElement( stages );

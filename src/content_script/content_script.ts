@@ -34,8 +34,11 @@ chrome.runtime.onMessage.addListener( async( message: any ) => {
             const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
             const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
             travisCiStatus.enhanceTravisCiStatus( travisCiStages.stages );
-            // intervalToken = setInterval( () => {
-            // }, 10000 );
+            travisCiStatus.addCollapseButton();
+            intervalToken = setInterval( async() => {
+                const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
+                travisCiStatus.enhanceTravisCiStatus( travisCiStages.stages );
+            }, 5000 );
 
         } catch ( error ) {
             // Not ready yet
