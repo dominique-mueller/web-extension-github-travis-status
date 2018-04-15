@@ -17,10 +17,13 @@
     "content_scripts": [
         {
             "matches": [
-                "https://github.com/*/pull/*"
+                "https://github.com/*"
             ],
             "js": [
                 "src/content_script.js"
+            ],
+            "css": [
+                "src/content_script.css"
             ]
         }
     ]

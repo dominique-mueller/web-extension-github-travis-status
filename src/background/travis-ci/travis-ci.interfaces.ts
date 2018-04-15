@@ -17,19 +17,27 @@ export interface TravisCiStage {
     id: number;
     number: number;
     name: string;
-    state: string;
+    state: TravisCiState;
     started_at: string; // ISO format
     finished_at: string; // ISO format
     jobs: Array<TravisCiJob>;
 }
 
+/**
+ * Travis CI Job Interface
+ */
 export interface TravisCiJob {
     '@type': 'job';
     '@href': string;
     '@representation': 'minimal';
     id: number;
     number: string; // With 2 decimals
-    state: string;
+    state: TravisCiState;
     started_at: string; // ISO format
     finished_at: string; // ISO format
 }
+
+/**
+ * Travis CI State Type
+ */
+export type TravisCiState = 'created' | 'started' | 'passed' | 'failed' | 'errored' | 'canceled';
