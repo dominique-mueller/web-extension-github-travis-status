@@ -44,7 +44,7 @@ export class TravisCiStatus {
             ( <HTMLAnchorElement> this.statusItemElement.querySelector( 'a.status-actions[href^="https://travis-ci.org/"]' ) )
                 .href
                 .split( '?' );
-        this.travisCiLinkQueryParams = queryParams;
+        this.travisCiLinkQueryParams = `?${ queryParams }`;
         this.travisCiProjectUrl = urlWithoutQueryParams.split( '/' ).slice( 0, 5 ).join( '/' );
         this.buildId = parseInt( urlWithoutQueryParams.split( '/' ).slice( -1 )[ 0 ], 10 );
 
