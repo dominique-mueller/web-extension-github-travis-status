@@ -9,7 +9,7 @@ export class TravisCiStatus {
     /**
      * Build ID
      */
-    private readonly buildId: number;
+    public readonly buildId: number;
 
     /**
      * Travis CI project URL
@@ -291,11 +291,16 @@ export class TravisCiStatus {
         jobNumberElement.innerText = `#${ job.number }`;
         jobElement.appendChild( jobNumberElement );
 
-        // Job runtime (similar to Travis CI)
-        const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateJobRuntime( job.started_at, job.finished_at );
+        // Job runtime (similar to Travis CI) - only visible if both start and end exist (important for canceled builds)
         const jobRuntimeElement: HTMLSpanElement = document.createElement( 'span' );
-        jobRuntimeElement.classList.add( 'label', 'Label--gray', 'extension__job-runtime' );
-        jobRuntimeElement.innerHTML = `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`;
+        jobRuntimeElement.classList.add( 'extension__job-runtime' );
+        if ( !!job.started_at && !!job.finished_at ) {
+            const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateJobRuntime( job.started_at, job.finished_at );
+            jobRuntimeElement.classList.add( 'label', 'Label--gray' );
+            jobRuntimeElement.innerHTML = jobMinutes > 0
+                ? `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`
+                : `${ jobSeconds }&#8201;sec`;
+        }
         jobElement.appendChild( jobRuntimeElement );
 
         // Job link
