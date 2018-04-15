@@ -94,15 +94,28 @@ export class TravisCiStatus {
         const mergeStatusListExpandedHeight: number = expandedHeight + 215;
         const mergeStatusListExpandedHeightPx: string = `${ mergeStatusListExpandedHeight }px`;
 
-        // Setup event listeners
+        // Setup event listeners for the collapse button
         collapseButtonElement.addEventListener( 'click', () => {
-            collapseButtonElement.classList.toggle( 'is-active' );
             if ( statusDetailsElement.style.maxHeight === collapsedHeightPx ) {
-                statusDetailsElement.style.maxHeight = expandedHeightPx
-                this.statusItemElement.parentElement.style.maxHeight = mergeStatusListExpandedHeightPx
+                statusDetailsElement.style.maxHeight = expandedHeightPx;
+                this.statusItemElement.parentElement.style.maxHeight = mergeStatusListExpandedHeightPx;
+                collapseButtonElement.classList.add( 'is-active' );
             } else {
-                statusDetailsElement.style.maxHeight = collapsedHeightPx
+                statusDetailsElement.style.maxHeight = collapsedHeightPx;
                 this.statusItemElement.parentElement.style.maxHeight = ''; // Reset
+                collapseButtonElement.classList.remove( 'is-active' );
+            }
+        } );
+
+        // Setup event listeners for the whole status details collapse button
+        const statusesToggleButtonElement: HTMLButtonElement = this.statusItemElement
+            .closest( '.branch-action-item' )
+            .querySelector( 'button.js-details-target' );
+        statusesToggleButtonElement.addEventListener( 'click', () => {
+            if ( statusesToggleButtonElement.getAttribute( 'aria-expanded' ) === true.toString() ) {
+                statusDetailsElement.style.maxHeight = collapsedHeightPx;
+                this.statusItemElement.parentElement.style.maxHeight = ''; // Reset
+                collapseButtonElement.classList.remove( 'is-active' );
             }
         } );
 
