@@ -17,6 +17,11 @@ export class TravisCiStatus {
     private activeStatusDetailsNode: HTMLDivElement;
 
     /**
+     * Runtime interval tokens, saved for cleanup to avoid memory leaks (#perfmatters)
+     */
+    private runtimeIntervalTokens: Array<number>;
+
+    /**
      * Travis CI project URL
      */
     private readonly travisCiProjectUrl: string;
@@ -43,6 +48,7 @@ export class TravisCiStatus {
      */
     constructor( statusItemElement: HTMLDivElement ) {
         this.statusItemElement = statusItemElement;
+        this.runtimeIntervalTokens = [];
 
         // Get URLs
         const [ urlWithoutQueryParams, queryParams ]: Array<string> =
@@ -71,6 +77,9 @@ export class TravisCiStatus {
      * @param stagesWithJobs - Stages with jobs
      */
     public renderDetailedTravisCiStatus( stagesWithJobs: Array<TravisCiStage> ): void {
+
+        // Cleanup first
+        this.cleanupRuntimeIntervals();
 
         // Create element
         const statusDetailsElement: HTMLDivElement = this.createStatusDetailsElement( stagesWithJobs );
@@ -185,7 +194,7 @@ export class TravisCiStatus {
         // Stage status
         const stageStatusElement: HTMLDivElement = document.createElement( 'div' );
         stageStatusElement.classList.add( 'extension__stage-status', 'flex-self-center' );
-        this.addTooltipToElement( stageStatusElement, stage.state );
+        this.addTooltipToElement( stageStatusElement, stage.state === 'started' ? 'running' : stage.state );
         stageHeadingElement.appendChild( stageStatusElement );
 
         // Stage status icon
@@ -247,7 +256,7 @@ export class TravisCiStatus {
         // Job status
         const jobStatusElement: HTMLDivElement = document.createElement( 'div' );
         jobStatusElement.classList.add( 'extension__job-status', 'flex-self-center' );
-        this.addTooltipToElement( jobStatusElement, job.state );
+        this.addTooltipToElement( jobStatusElement, job.state === 'started' ? 'running' : job.state );
         jobElement.appendChild( jobStatusElement );
 
         // Job icon
@@ -269,12 +278,27 @@ export class TravisCiStatus {
         // Job runtime (similar to Travis CI) - only visible if both start and end exist (important for canceled builds)
         const jobRuntimeElement: HTMLSpanElement = document.createElement( 'span' );
         jobRuntimeElement.classList.add( 'extension__job-runtime' );
-        if ( !!job.started_at && !!job.started_at && job.state !== 'canceled' ) {
-            const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateJobRuntime( job.started_at, job.finished_at );
+        if ( !!job.started_at && job.state !== 'canceled' ) {
             jobRuntimeElement.classList.add( 'label', 'Label--gray' );
+
+            // Initial rendering
+            const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateRuntime( job.started_at, job.finished_at || ( new Date() ).toISOString() );
             jobRuntimeElement.innerHTML = jobMinutes > 0
                 ? `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`
                 : `${ jobSeconds }&#8201;sec`;
+
+            // Update rendering (if build is in progress aka 'started')
+            if ( job.state === 'started' ) {
+                this.runtimeIntervalTokens.push(
+                    setInterval( () => {
+                        const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateRuntime( job.started_at, ( new Date() ).toISOString() );
+                        jobRuntimeElement.innerHTML = jobMinutes > 0
+                            ? `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`
+                            : `${ jobSeconds }&#8201;sec`;
+                    }, 1000 )
+                );
+            }
+
         }
         jobElement.appendChild( jobRuntimeElement );
 
@@ -309,11 +333,35 @@ export class TravisCiStatus {
      * @param endTime   - End time (ISO format)
      * @returns         - List of numbers, first item as minutes and second item as seconds
      */
-    private calculateJobRuntime( startTime: string, endTime: string ): Array<number> {
-        const runtime: number = ( ( new Date( endTime ) ).getTime() - ( new Date( startTime ) ).getTime() ) / 1000;
+    private calculateRuntime( startTime: string, endTime: string ): Array<number> {
+        const startTimeWithoutMs: string = this.removeMillisecondsFromIsoDate( startTime );
+        const endTimeWithoutMs: string = this.removeMillisecondsFromIsoDate( endTime );
+        const runtime: number = ( ( new Date( endTimeWithoutMs ) ).getTime() - ( new Date( startTimeWithoutMs ) ).getTime() ) / 1000;
         const runtimeInMinutes: number = Math.floor( runtime / 60 );
         const runtimeInSeconds: number = runtime - runtimeInMinutes * 60;
         return [ runtimeInMinutes, runtimeInSeconds ];
+    }
+
+    /**
+     * Remove (potentially existing) ms from ISO date
+     *
+     * @param isoDate   ISO date, with or without ms
+     * @returns       - ISO date without ms
+     */
+    private removeMillisecondsFromIsoDate( isoDate: string ): string {
+        return isoDate.indexOf( '.' ) == -1
+            ? isoDate
+            : `${ isoDate.split( '.' )[ 0 ] }Z`;
+    }
+
+    /**
+     * Cleanup runtime interval tokens (#perfmatters)
+     */
+    private cleanupRuntimeIntervals(): void {
+        this.runtimeIntervalTokens.forEach( ( runtimeIntervalToken: number ) => {
+            clearInterval( runtimeIntervalToken );
+        } );
+        this.runtimeIntervalTokens = [];
     }
 
 }

@@ -68,7 +68,7 @@ const mutationObserver: MutationObserver = new MutationObserver( ( mutations: an
 const reset: () => void = debounce( () => {
     contentScript.cleanup();
     contentScript.init();
-}, 5000 );
+}, 0 );
 
 chrome.runtime.onMessage.addListener( async ( message: any ) => {
     if ( message.type === 'navigation' && message.isGithubPullRequestPage ) {

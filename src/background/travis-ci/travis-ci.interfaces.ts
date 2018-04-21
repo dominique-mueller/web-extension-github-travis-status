@@ -33,8 +33,10 @@ export interface TravisCiJob {
     id: number;
     number: string; // With 2 decimals
     state: TravisCiState;
-    started_at: string; // ISO format
-    finished_at: string; // ISO format
+    started_at: string; // ISO format, without ms
+    finished_at: string; // ISO format, without ms
+    created_at: string; // ISO format
+    updated_at: string; // ISO format
 }
 
 /**
