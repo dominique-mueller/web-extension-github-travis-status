@@ -277,15 +277,14 @@ export class TravisCiStatus {
 
         // Job runtime (similar to Travis CI) - only visible if both start and end exist (important for canceled builds)
         const jobRuntimeElement: HTMLSpanElement = document.createElement( 'span' );
-        jobRuntimeElement.classList.add( 'extension__job-runtime' );
         if ( !!job.started_at && job.state !== 'canceled' ) {
-            jobRuntimeElement.classList.add( 'label', 'Label--gray' );
+            jobRuntimeElement.classList.add( 'text-gray' );
 
             // Initial rendering
             const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateRuntime( job.started_at, job.finished_at || ( new Date() ).toISOString() );
             jobRuntimeElement.innerHTML = jobMinutes > 0
-                ? `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`
-                : `${ jobSeconds }&#8201;sec`;
+                ? `&nbsp;—&nbsp;${ jobMinutes }&hairsp;min&hairsp;&hairsp;${ jobSeconds }&hairsp;sec`
+                : `&nbsp;—&nbsp;${ jobSeconds }&hairsp;sec`;
 
             // Update rendering (if build is in progress aka 'started')
             if ( job.state === 'started' ) {
@@ -293,8 +292,8 @@ export class TravisCiStatus {
                     setInterval( () => {
                         const [ jobMinutes, jobSeconds ]: Array<number> = this.calculateRuntime( job.started_at, ( new Date() ).toISOString() );
                         jobRuntimeElement.innerHTML = jobMinutes > 0
-                            ? `${ jobMinutes }&#8201;min&#8201;&#8201;${ jobSeconds }&#8201;sec`
-                            : `${ jobSeconds }&#8201;sec`;
+                            ? `&nbsp;—&nbsp;${ jobMinutes }&hairsp;min&hairsp;&hairsp;${ jobSeconds }&hairsp;sec`
+                            : `&nbsp;—&nbsp;${ jobSeconds }&hairsp;sec`;
                     }, 1000 )
                 );
             }
@@ -302,11 +301,27 @@ export class TravisCiStatus {
         }
         jobElement.appendChild( jobRuntimeElement );
 
+        if ( job.state === 'passed' || job.state === 'errored' || job.state === 'failed' || job.state === 'canceled' ) {
+            const jobRestartButtonElement: HTMLButtonElement = document.createElement( 'button' );
+            jobRestartButtonElement.type = 'button';
+            jobRestartButtonElement.classList.add( 'btn', 'btn-sm', 'btn-outline', 'extension__job-action' );
+            jobRestartButtonElement.innerHTML = 'restart';
+            jobElement.appendChild( jobRestartButtonElement );
+        } else {
+            const jobRestartButtonElement: HTMLButtonElement = document.createElement( 'button' );
+            jobRestartButtonElement.type = 'button';
+            jobRestartButtonElement.classList.add( 'btn', 'btn-sm', 'btn-outline', 'extension__job-action' );
+            jobRestartButtonElement.innerHTML = 'cancel';
+            jobElement.appendChild( jobRestartButtonElement );
+        }
+
         // Job link
         const jobLinkElement: HTMLAnchorElement = document.createElement( 'a' );
+        jobLinkElement.classList.add( 'extension__job-details' );
         jobLinkElement.href = `${ [ this.travisCiProjectUrl, 'jobs', job.id.toString() ].join( '/' ) }${ this.travisCiLinkQueryParams }`;
         jobLinkElement.target = '_blank';
         jobLinkElement.innerText = 'View log';
+        jobLinkElement.title = 'go to the full build log in Travis CI';
         jobElement.appendChild( jobLinkElement );
 
         return jobElement;
