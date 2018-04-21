@@ -24,5 +24,3 @@ function onNavigation( details: chrome.webNavigation.WebNavigationTransitionCall
         isGithubPullRequestPage: /^https:\/\/github\.com\/.+\/.+\/pull\/\d+$/.test( details.url )
     } );
 }
-
-// /^https:\/\/github\.com\/.+\/.+\/pull\/\d+(\/commits)?$/

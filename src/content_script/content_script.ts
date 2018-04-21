@@ -4,7 +4,6 @@ import { TravisCiStages } from 'background/travis-ci/travis-ci.interfaces';
 // Content Script
 
 console.log( 'CONTENT SCRIPT RUNNING' );
-// document.body.appendChild( document.createComment( 'CONTENT SRIPT MANIPULATION' ) );
 
 function requestBuildDetails( buildId: number ): Promise<TravisCiStages> {
     return new Promise( ( resolve: ( stages: TravisCiStages ) => void, reject: () => void ) => {
@@ -16,43 +15,84 @@ function requestBuildDetails( buildId: number ): Promise<TravisCiStages> {
     } );
 }
 
-let intervalToken: number;
+
+export class ContentScript {
+
+    private intervalToken: number;
+
+    public async init() {
+
+        // Setup
+        const mergeStatusItem: HTMLDivElement = <HTMLDivElement>document
+            .querySelector( '.mergeability-details a.status-actions[href^="https://travis-ci.org/"]' )
+            .closest( 'div.merge-status-item' );
+        const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
+
+        // Initial rendering
+        const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
+        travisCiStatus.renderDetailedTravisCiStatus( travisCiStages.stages );
+        travisCiStatus.fixMergeStatusCheckToggle();
+
+        // Update rendering
+        this.intervalToken = setInterval( async() => {
+            const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
+            if ( this.intervalToken ) { // Cancel if interval got reset
+                travisCiStatus.renderDetailedTravisCiStatus( travisCiStages.stages );
+            }
+        }, 5000 );
+    }
+
+    public cleanup() {
+        clearInterval( this.intervalToken );
+        this.intervalToken = undefined;
+    }
+
+}
+
+const contentScript: ContentScript = new ContentScript();
+
+const mutationObserver: MutationObserver = new MutationObserver( ( mutations: any ) => {
+    console.log( mutations );
+    reset();
+} );
+
+const reset: () => void = debounce( () => {
+    console.log( 'RESET' );
+    contentScript.cleanup();
+    contentScript.init();
+}, 5000 );
 
 chrome.runtime.onMessage.addListener( async( message: any ) => {
-
-    console.log( 'CONTENT_SCRIPT MESSAGE' );
-    console.log( message );
-
     if ( message.type === 'navigation' && message.isGithubPullRequestPage ) {
 
-        try {
-
-            const mergeStatusItem: HTMLDivElement = <HTMLDivElement>document
-                .querySelector( '.mergeability-details a.status-actions[href^="https://travis-ci.org/"]' )
-                .closest( 'div.merge-status-item' );
-
-            const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
-            const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
-            travisCiStatus.enhanceTravisCiStatus( travisCiStages.stages );
-            travisCiStatus.addCollapseButton();
-            intervalToken = setInterval( async() => {
-                const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
-                travisCiStatus.enhanceTravisCiStatus( travisCiStages.stages );
-            }, 5000 );
-
-        } catch ( error ) {
-            // Not ready yet
-
-            // Cleanup
-            clearInterval( intervalToken );
-
-        }
+        mutationObserver.observe( document.querySelector( '#partial-pull-merging' ).parentElement, {
+            childList: true
+        } );
+        contentScript.init();
 
     } else {
 
-        // Cleanup
-        clearInterval( intervalToken );
+        mutationObserver.disconnect();
+        contentScript.cleanup();
 
     }
-
 } );
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce( func, wait, immediate? ) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if ( !immediate ) func.apply( context, args );
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout( timeout );
+        timeout = setTimeout( later, wait );
+        if ( callNow ) func.apply( context, args );
+    };
+};

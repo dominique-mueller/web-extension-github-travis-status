@@ -40,4 +40,4 @@ export interface TravisCiJob {
 /**
  * Travis CI State Type
  */
-export type TravisCiState = 'created' | 'started' | 'passed' | 'failed' | 'errored' | 'canceled';
+export type TravisCiState = 'received' | 'queued' | 'created' | 'started' | 'passed' | 'failed' | 'errored' | 'canceled';

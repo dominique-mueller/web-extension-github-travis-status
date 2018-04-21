@@ -1,28 +1,8 @@
 .extension {
 
-    &__button {
-        border: none;
-        margin-right: 15px;
-        float: right;
-        padding: 1px 0 1px 2px !important;
-        cursor: pointer;
-
-        .extension__icon {
-            transform: rotateX( 0 );
-            transition: transform .25s ease-in-out; // Same as GitHub uses
-        }
-
-        &.is-active > .extension__icon {
-            transform: rotateX( 180deg );
-        }
-
-    }
-
     &__details {
         padding: 0 !important;
-        margin-top: -1px;
-        overflow: hidden;
-        transition: max-height .25s ease-in-out; // Same as GitHub uses
+        margin-top: -1px; // Hide border between Travis CI status and its details by overlapping
     }
 
     &__icon {
@@ -32,6 +12,8 @@
 
         &--canceled {
             fill: #c8c9cb;
+            height: 12px;
+            margin: 2px;
         }
 
         &--created {
@@ -56,6 +38,14 @@
 
         &--collapse {
             fill: #586069;
+        }
+
+        &--queued {
+            fill: #c8c9cb;
+        }
+
+        &--received {
+            fill: #c8c9cb;
         }
 
     }
