@@ -1,3 +1,5 @@
+import * as deepEqual from 'deep-equal';
+
 import { TravisCiStatus } from './travis-ci-status';
 import { TravisCiStages } from 'background/travis-ci/travis-ci.interfaces';
 
@@ -20,6 +22,8 @@ export class ContentScript {
 
     private intervalToken: number;
 
+    private travisCiStages: TravisCiStages;
+
     public async init() {
 
         // Setup
@@ -29,16 +33,22 @@ export class ContentScript {
         const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
 
         // Initial rendering
-        const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
-        travisCiStatus.renderDetailedTravisCiStatus( travisCiStages.stages );
+        this.travisCiStages = await requestBuildDetails( travisCiStatus.buildId );
+        travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
         travisCiStatus.fixMergeStatusCheckToggle();
 
-        // Update rendering
-        this.intervalToken = setInterval( async() => {
-            const travisCiStages: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
-            if ( this.intervalToken ) { // Cancel if interval got reset
-                travisCiStatus.renderDetailedTravisCiStatus( travisCiStages.stages );
+        // Updated rendering
+        this.intervalToken = setInterval( async () => {
+
+            // Fetch updated travis CI data
+            const travisCiStagesUpdated: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
+
+            // Skip render update if the interval got canceled, or the fetched data brings no update to the table
+            if ( this.intervalToken && !deepEqual( travisCiStagesUpdated, this.travisCiStages, { strict: true } ) ) {
+                this.travisCiStages = travisCiStagesUpdated;
+                travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
             }
+
         }, 5000 );
     }
 
@@ -52,29 +62,23 @@ export class ContentScript {
 const contentScript: ContentScript = new ContentScript();
 
 const mutationObserver: MutationObserver = new MutationObserver( ( mutations: any ) => {
-    console.log( mutations );
     reset();
 } );
 
 const reset: () => void = debounce( () => {
-    console.log( 'RESET' );
     contentScript.cleanup();
     contentScript.init();
 }, 5000 );
 
-chrome.runtime.onMessage.addListener( async( message: any ) => {
+chrome.runtime.onMessage.addListener( async ( message: any ) => {
     if ( message.type === 'navigation' && message.isGithubPullRequestPage ) {
-
         mutationObserver.observe( document.querySelector( '#partial-pull-merging' ).parentElement, {
             childList: true
         } );
         contentScript.init();
-
     } else {
-
         mutationObserver.disconnect();
         contentScript.cleanup();
-
     }
 } );
 
@@ -82,7 +86,7 @@ chrome.runtime.onMessage.addListener( async( message: any ) => {
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
-function debounce( func, wait, immediate? ) {
+function debounce( func, wait, immediate?) {
     var timeout;
     return function () {
         var context = this, args = arguments;
