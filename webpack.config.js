@@ -4,6 +4,8 @@ const webpack = require( 'webpack' );
 const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' )
 
+const packageJson = require( './package.json' );
+
 /**
  * Webpack Production Configuration
  */
@@ -59,12 +61,19 @@ module.exports = {
         new CopyWebpackPlugin( [
             {
                 from: path.resolve( 'src', 'manifest.json' ),
-                to: path.resolve( 'dist' )
+                to: path.resolve( 'dist' ),
+                transform: ( contents, path ) => {
+                    const manifestJson = JSON.parse( contents.toString() );
+                    const newManifestJson = { // Specific order!
+                        name: manifestJson.name,
+                        description: packageJson.description,
+                        version: packageJson.version,
+                        ...manifestJson
+                    };
+                    return JSON.stringify( newManifestJson, null, '\t' );
+                }
             }
-        ] ),
-        new webpack.ProvidePlugin( {
-            browser: 'webextension-polyfill'
-        } )
+        ] )
     ],
     optimization: {
         splitChunks: {

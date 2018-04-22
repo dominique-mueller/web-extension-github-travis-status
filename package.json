@@ -1,6 +1,6 @@
 {
     "name": "web-extension-github-travis-status",
-    "description": "TODO",
+    "description": "Enhances the Travis CI status on GitHub pull request pages.",
     "version": "1.0.0",
     "author": {
         "name": "Dominique Müller",
@@ -18,8 +18,7 @@
     },
     "keywords": [],
     "scripts": {
-        "build": "webpack --mode production",
-        "serve": "webpack --mode development --watch"
+        "build": "webpack --mode production"
     },
     "dependencies": {
         "deep-equal": "1.0.x"
@@ -32,10 +31,10 @@
         "extract-loader": "2.0.x",
         "file-loader": "1.1.x",
         "node-sass": "4.8.x",
-        "sass-loader": "6.0.x",
-        "ts-loader": "4.1.x",
+        "sass-loader": "7.0.x",
+        "ts-loader": "4.2.x",
         "typescript": "2.8.x",
-        "webpack": "4.5.x",
+        "webpack": "4.6.x",
         "webpack-cli": "2.0.x"
     }
 }

@@ -1,7 +1,5 @@
 {
-    "name": "GitHub & Travis CI - Extended Status",
-    "version": "1.0.0",
-    "description": "TODO",
+    "name": "GitHub & Travis CI - Enhanced Status",
     "manifest_version": 2,
     "permissions": [
         "https://github.com/*",
