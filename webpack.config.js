@@ -15,9 +15,7 @@ module.exports = {
         content_script: [
             path.resolve( 'src', 'content_script', 'content_script.ts' ),
             path.resolve( 'src', 'content_script', 'content_script.scss' )
-        ],
-        options: path.resolve( 'src', 'options', 'options.ts' ),
-        popup: path.resolve( 'src', 'popup', 'popup.ts' )
+        ]
     },
     output: {
         path: path.resolve( 'dist', 'src' ),
