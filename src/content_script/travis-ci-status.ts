@@ -299,9 +299,13 @@ export class TravisCiStatus {
         // Job link
         const jobLinkElement: HTMLAnchorElement = document.createElement( 'a' );
         jobLinkElement.classList.add( 'extension__job-details' );
-        jobLinkElement.href = `${ [ this.travisCiProjectUrl, 'jobs', job.id.toString() ].join( '/' ) }${ this.travisCiLinkQueryParams }`;
+        if ( job.state !== 'queued' && job.state !== 'received' && job.state !== 'created' ) {
+            jobLinkElement.href = `${ [ this.travisCiProjectUrl, 'jobs', job.id.toString() ].join( '/' ) }${ this.travisCiLinkQueryParams }`;
+            jobLinkElement.title = 'View the log in Travis CI';
+        } else {
+            jobLinkElement.classList.add( 'extension__job-details--disabled' );
+        }
         jobLinkElement.innerText = 'View log';
-        jobLinkElement.title = 'View the full job log in Travis CI';
         jobElement.appendChild( jobLinkElement );
 
         return jobElement;

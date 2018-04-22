@@ -52,6 +52,7 @@
         &--started {
             margin: 1px -2px -1px 2px;
             fill: #dbab09;
+            opacity: .3;
             animation: pulse 2s linear infinite .5s; // GitHub animation, same values - plus .5s offset (in comparison to runtime counter)
         }
 
@@ -135,6 +136,17 @@
 
         &-details {
             margin-left: auto;
+
+            &--disabled {
+                color: #c8c9cb;
+                cursor: default;
+
+                &:hover {
+                    text-decoration: none;
+                }
+
+            }
+
         }
 
     }
