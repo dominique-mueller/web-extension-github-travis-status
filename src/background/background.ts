@@ -1,25 +1,71 @@
 import { TravisCiClient } from './travis-ci/travis-ci.client';
 import { TravisCiStages } from './travis-ci/travis-ci.interfaces';
 
-const travisCiClient: TravisCiClient = new TravisCiClient();
+/**
+ * Background
+ */
+export class ExtensionBackground {
 
-// Answer requests for Travis CI buiild information
-chrome.runtime.onMessage.addListener( ( request: any, sender: chrome.runtime.MessageSender, sendResponse: ( response: any ) => void ) => {
-    travisCiClient
-        .fetchBuildStagesWithJobs( request.buildId )
-        .then( ( travisCiStages: TravisCiStages ) => {
-            console.log( travisCiStages );
-            sendResponse( travisCiStages );
+    /**
+     * Travis CI client
+     */
+    private readonly travisCiClient: TravisCiClient;
+
+    /**
+     * Constructor
+     */
+    constructor() {
+        this.travisCiClient = new TravisCiClient();
+
+        // Setup content script communication
+        chrome.runtime.onMessage.addListener( this.handleContentScriptRequest.bind( this ) );
+
+        // Notify content script about navigation changes, triggering re-rendering and / or cleanup actions
+        chrome.webNavigation.onCompleted.addListener( this.handleGithubNavigation.bind( this ) ); // Initial navigation
+        chrome.webNavigation.onHistoryStateUpdated.addListener( this.handleGithubNavigation.bind( this ) ); // Further navigations
+
+    }
+
+    /**
+     * Handle content script request
+     *
+     * @param   request      - Request data
+     * @param   sender       - Reqeust sender (e.g. which tab)
+     * @param   sendResponse - Send response callback function
+     * @returns              - Nothing, or true if function is asynchronous
+     */
+    private handleContentScriptRequest( request: any, sender: chrome.runtime.MessageSender, sendResponse: ( response: any ) => void ): boolean {
+        this.travisCiClient
+            .fetchBuildStagesWithJobs( request.buildId )
+            .then( ( travisCiStages: TravisCiStages ) => {
+                sendResponse( travisCiStages );
+            } );
+        return true; // Asynchronous response
+    }
+
+    /**
+     * Handle GitHub navigation
+     *
+     * @param details - Navigation details
+     */
+    private handleGithubNavigation( details: chrome.webNavigation.WebNavigationTransitionCallbackDetails ): void {
+        chrome.tabs.sendMessage( details.tabId, {
+            type: 'navigation',
+            isGithubPullRequestPage: this.isGithubPullRequestUrl( details.url )
         } );
-    return true; // Asynchronous response
-} );
+    }
 
-// Listen to navigation changes within GitHub itself, send information to content script
-chrome.webNavigation.onCompleted.addListener( onNavigation ); // Initial navigation
-chrome.webNavigation.onHistoryStateUpdated.addListener( onNavigation ); // Further navigations
-function onNavigation( details: chrome.webNavigation.WebNavigationTransitionCallbackDetails ) {
-    chrome.tabs.sendMessage( details.tabId, {
-        type: 'navigation',
-        isGithubPullRequestPage: /^https:\/\/github\.com\/.+\/.+\/pull\/\d+$/.test( details.url )
-    } );
+    /**
+     * Check if the given URL is a GitHub Pull Request URL
+     *
+     * @param   url - URL
+     * @returns     - Flag, describing whether the URL is or is not a GitHub Pull Request URL
+     */
+    private isGithubPullRequestUrl( url: string ): boolean {
+        return /^https:\/\/github\.com\/.+\/.+\/pull\/\d+$/.test( url );
+    }
+
 }
+
+// Run
+const background: ExtensionBackground = new ExtensionBackground();

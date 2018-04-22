@@ -1,5 +1,5 @@
 /**
- * GitHub Octicons (v7.2.0)
+ * GitHub Octicons (v7.2.0), names as camelCase, only SVG paths
  *
  * Source: https://octicons.github.com/
  */

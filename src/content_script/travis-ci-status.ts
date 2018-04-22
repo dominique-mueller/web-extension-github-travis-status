@@ -331,7 +331,7 @@ export class TravisCiStatus {
     private calculateRuntime( startTime: string, endTime: string ): Array<number> {
         const startTimeWithoutMs: string = this.removeMillisecondsFromIsoDate( startTime );
         const endTimeWithoutMs: string = this.removeMillisecondsFromIsoDate( endTime );
-        const runtime: number = ( ( new Date( endTimeWithoutMs ) ).getTime() - ( new Date( startTimeWithoutMs ) ).getTime() ) / 1000;
+        const runtime: number = ( ( new Date( endTimeWithoutMs ) ).getTime() - ( new Date( startTimeWithoutMs ) ).getTime() ) / 1000 + 1;
         const runtimeInMinutes: number = Math.floor( runtime / 60 );
         const runtimeInSeconds: number = runtime - runtimeInMinutes * 60;
         return [ runtimeInMinutes, runtimeInSeconds ];

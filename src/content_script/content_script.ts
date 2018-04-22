@@ -3,79 +3,130 @@ import * as deepEqual from 'deep-equal';
 import { TravisCiStatus } from './travis-ci-status';
 import { TravisCiStages } from 'background/travis-ci/travis-ci.interfaces';
 
-// Content Script
+/**
+ * Content Script
+ */
+export class ExtensionContentScript {
 
-console.log( 'CONTENT SCRIPT RUNNING' );
-
-function requestBuildDetails( buildId: number ): Promise<TravisCiStages> {
-    return new Promise( ( resolve: ( stages: TravisCiStages ) => void, reject: () => void ) => {
-        chrome.runtime.sendMessage( {
-            buildId
-        }, ( response: TravisCiStages ) => {
-            resolve( response );
-        } );
-    } );
-}
-
-export class ContentScript {
-
+    /**
+     * Interval token (used for cleanup)
+     */
     private intervalToken: number;
 
+    /**
+     * Travis CI stages with jobs data
+     */
     private travisCiStages: TravisCiStages;
 
-    public async init() {
+    /**
+     * Polling interval in ms
+     */
+    private readonly pollingInterval: number;
+
+    /**
+     * Mutation observer for the pull merging partial
+     */
+    private readonly pullMergingPartialMutationObserver: MutationObserver;
+
+    /**
+     * Constructor
+     *
+     * @param [pollingInterval=5000] - Polling interval
+     */
+    constructor( pollingInterval: number = 5000 ) {
+        this.pollingInterval = pollingInterval;
+
+        // Re-render every time the pull merging partial gets re-rendered
+        this.pullMergingPartialMutationObserver = new MutationObserver( ( mutations: Array<MutationRecord> ): void => {
+            this.cleanup();
+            this.init();
+        } );
+
+        // Re-render on GitHub navigation
+        chrome.runtime.onMessage.addListener( async ( message: any ) => {
+            if ( message.type === 'navigation' && message.isGithubPullRequestPage ) {
+                this.pullMergingPartialMutationObserver.observe( document.querySelector( '#partial-pull-merging' ).parentElement, {
+                    childList: true
+                } );
+                this.init();
+            } else {
+                this.pullMergingPartialMutationObserver.disconnect();
+                this.cleanup();
+            }
+        } );
+
+    }
+
+    /**
+     * Initialize
+     */
+    private async init() {
 
         // Setup
-        const mergeStatusItem: HTMLDivElement = <HTMLDivElement>document
-            .querySelector( '.mergeability-details a.status-actions[href^="https://travis-ci.org/"]' )
-            .closest( 'div.merge-status-item' );
+        const mergeStatusItem: HTMLDivElement = this.findMergeStatusItem();
         const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
 
         // Initial rendering
-        if ( this.travisCiStages ) {
+        const hasPreviousTravisCiStages: boolean = !!this.travisCiStages;
+        if ( hasPreviousTravisCiStages ) { // Use 'cached' (aka previous) data if available
             travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
+            travisCiStatus.fixMergeStatusCheckToggle();
         }
-        this.travisCiStages = await requestBuildDetails( travisCiStatus.buildId );
+        this.travisCiStages = await this.fetchBuildData( travisCiStatus.buildId );
         travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
-        travisCiStatus.fixMergeStatusCheckToggle();
+        if ( !hasPreviousTravisCiStages ) {
+            travisCiStatus.fixMergeStatusCheckToggle();
+        }
 
-        // Updated rendering
+        // Polling w/ re-rendering
         this.intervalToken = setInterval( async () => {
 
-            // Fetch updated travis CI data
-            const travisCiStagesUpdated: TravisCiStages = await requestBuildDetails( travisCiStatus.buildId );
-
-            // Skip render update if the interval got canceled, or the fetched data brings no update to the table
+            // Skip re-rendering if polling got canceled, or the fetched data brings no update to the table
+            const travisCiStagesUpdated: TravisCiStages = await this.fetchBuildData( travisCiStatus.buildId );
             if ( this.intervalToken && !deepEqual( travisCiStagesUpdated, this.travisCiStages, { strict: true } ) ) {
                 this.travisCiStages = travisCiStagesUpdated;
                 travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
             }
 
-        }, 5000 );
+        }, this.pollingInterval );
     }
 
-    public cleanup() {
-        clearInterval( this.intervalToken );
-        this.intervalToken = undefined;
+    /**
+     * Cleanup
+     */
+    private cleanup() {
+        if ( this.intervalToken ) {
+            clearInterval( this.intervalToken );
+            this.intervalToken = undefined;
+        }
+    }
+
+    /**
+     * Request build details
+     *
+     * @param   buildId - Build ID
+     * @returns         - Promise, resolving with Travis CI stages incl. jobs
+     */
+    private fetchBuildData( buildId: number ): Promise<TravisCiStages> {
+        return new Promise( ( resolve: ( stages: TravisCiStages ) => void, reject: () => void ) => {
+            chrome.runtime.sendMessage( {
+                buildId
+            }, ( response: TravisCiStages ) => {
+                resolve( response );
+            } );
+        } );
+    }
+
+    /**
+     * Find our merge status item
+     */
+    private findMergeStatusItem(): HTMLDivElement {
+        return <HTMLDivElement>document
+            .querySelector( '.mergeability-details a.status-actions[href^="https://travis-ci.org/"]' )
+            .closest( 'div.merge-status-item' );
     }
 
 }
 
-const contentScript: ContentScript = new ContentScript();
-
-const mutationObserver: MutationObserver = new MutationObserver( ( mutations: any ) => {
-    contentScript.cleanup();
-    contentScript.init();
-} );
-
-chrome.runtime.onMessage.addListener( async ( message: any ) => {
-    if ( message.type === 'navigation' && message.isGithubPullRequestPage ) {
-        mutationObserver.observe( document.querySelector( '#partial-pull-merging' ).parentElement, {
-            childList: true
-        } );
-        contentScript.init();
-    } else {
-        mutationObserver.disconnect();
-        contentScript.cleanup();
-    }
-} );
+// Run
+const contentScript: ExtensionContentScript = new ExtensionContentScript();
