@@ -33,6 +33,9 @@ export class ContentScript {
         const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
 
         // Initial rendering
+        if ( this.travisCiStages ) {
+            travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
+        }
         this.travisCiStages = await requestBuildDetails( travisCiStatus.buildId );
         travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
         travisCiStatus.fixMergeStatusCheckToggle();
@@ -62,13 +65,9 @@ export class ContentScript {
 const contentScript: ContentScript = new ContentScript();
 
 const mutationObserver: MutationObserver = new MutationObserver( ( mutations: any ) => {
-    reset();
-} );
-
-const reset: () => void = debounce( () => {
     contentScript.cleanup();
     contentScript.init();
-}, 0 );
+} );
 
 chrome.runtime.onMessage.addListener( async ( message: any ) => {
     if ( message.type === 'navigation' && message.isGithubPullRequestPage ) {
@@ -81,22 +80,3 @@ chrome.runtime.onMessage.addListener( async ( message: any ) => {
         contentScript.cleanup();
     }
 } );
-
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce( func, wait, immediate?) {
-    var timeout;
-    return function () {
-        var context = this, args = arguments;
-        var later = function () {
-            timeout = null;
-            if ( !immediate ) func.apply( context, args );
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout( timeout );
-        timeout = setTimeout( later, wait );
-        if ( callNow ) func.apply( context, args );
-    };
-};

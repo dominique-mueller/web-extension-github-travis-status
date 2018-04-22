@@ -110,23 +110,18 @@ export class TravisCiStatus {
             .reduce( ( height: number, mergeStatusItem: HTMLDivElement ) => {
                 return height + mergeStatusItem.getBoundingClientRect().height;
             }, 0 );
-        const mergeStatusListHeightPx: string = `${ mergeStatusListHeight }px`;
-
-        // Hide scrollbar flickering during height-related animations
-        this.statusItemElement.parentElement.style.overflow = 'hidden';
-
 
         // Fix initial max-height (if necessary)
         if ( statusesToggleButtonElement.getAttribute( 'aria-expanded' ) === true.toString() ) {
-            this.statusItemElement.parentElement.style.maxHeight = mergeStatusListHeightPx;
+            this.statusItemElement.parentElement.setAttribute( 'style', `max-height: ${ mergeStatusListHeight }px !important` );
         }
 
         // Fix max-height update on click
         statusesToggleButtonElement.addEventListener( 'click', () => {
             if ( statusesToggleButtonElement.getAttribute( 'aria-expanded' ) === true.toString() ) {
-                this.statusItemElement.parentElement.style.maxHeight = ''; // Reset
+                this.statusItemElement.parentElement.setAttribute( 'style', 'max-height: 0px !important' );
             } else {
-                this.statusItemElement.parentElement.style.maxHeight = mergeStatusListHeightPx;
+                this.statusItemElement.parentElement.setAttribute( 'style', `max-height: ${ mergeStatusListHeight }px !important` );
             }
         } );
 
