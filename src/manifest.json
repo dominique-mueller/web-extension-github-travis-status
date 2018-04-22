@@ -12,7 +12,7 @@
         "scripts": [
             "src/background.js"
         ],
-        "persistent": true
+        "persistent": false
     },
     "content_scripts": [
         {
