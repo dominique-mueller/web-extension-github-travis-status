@@ -296,27 +296,13 @@ export class TravisCiStatus {
         }
         jobElement.appendChild( jobRuntimeElement );
 
-        if ( job.state === 'passed' || job.state === 'errored' || job.state === 'failed' || job.state === 'canceled' ) {
-            const jobRestartButtonElement: HTMLButtonElement = document.createElement( 'button' );
-            jobRestartButtonElement.type = 'button';
-            jobRestartButtonElement.classList.add( 'btn', 'btn-sm', 'btn-outline', 'extension__job-action' );
-            jobRestartButtonElement.innerHTML = 'restart';
-            jobElement.appendChild( jobRestartButtonElement );
-        } else {
-            const jobRestartButtonElement: HTMLButtonElement = document.createElement( 'button' );
-            jobRestartButtonElement.type = 'button';
-            jobRestartButtonElement.classList.add( 'btn', 'btn-sm', 'btn-outline', 'extension__job-action' );
-            jobRestartButtonElement.innerHTML = 'cancel';
-            jobElement.appendChild( jobRestartButtonElement );
-        }
-
         // Job link
         const jobLinkElement: HTMLAnchorElement = document.createElement( 'a' );
         jobLinkElement.classList.add( 'extension__job-details' );
         jobLinkElement.href = `${ [ this.travisCiProjectUrl, 'jobs', job.id.toString() ].join( '/' ) }${ this.travisCiLinkQueryParams }`;
         jobLinkElement.target = '_blank';
         jobLinkElement.innerText = 'View log';
-        jobLinkElement.title = 'go to the full build log in Travis CI';
+        jobLinkElement.title = 'View the full job log in Travis CI';
         jobElement.appendChild( jobLinkElement );
 
         return jobElement;

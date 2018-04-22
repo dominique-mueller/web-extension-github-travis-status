@@ -17,7 +17,6 @@ function requestBuildDetails( buildId: number ): Promise<TravisCiStages> {
     } );
 }
 
-
 export class ContentScript {
 
     private intervalToken: number;

@@ -1,10 +1,9 @@
 import { TravisCiClient } from './travis-ci/travis-ci.client';
 import { TravisCiStages } from './travis-ci/travis-ci.interfaces';
 
-console.log( 'RUNNING BACKGROUND!' );
-
 const travisCiClient: TravisCiClient = new TravisCiClient();
 
+// Answer requests for Travis CI buiild information
 chrome.runtime.onMessage.addListener( ( request: any, sender: chrome.runtime.MessageSender, sendResponse: ( response: any ) => void ) => {
     travisCiClient
         .fetchBuildStagesWithJobs( request.buildId )
