@@ -300,7 +300,6 @@ export class TravisCiStatus {
         const jobLinkElement: HTMLAnchorElement = document.createElement( 'a' );
         jobLinkElement.classList.add( 'extension__job-details' );
         jobLinkElement.href = `${ [ this.travisCiProjectUrl, 'jobs', job.id.toString() ].join( '/' ) }${ this.travisCiLinkQueryParams }`;
-        jobLinkElement.target = '_blank';
         jobLinkElement.innerText = 'View log';
         jobLinkElement.title = 'View the full job log in Travis CI';
         jobElement.appendChild( jobLinkElement );
