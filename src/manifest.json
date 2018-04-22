@@ -20,7 +20,8 @@
                 "https://github.com/*"
             ],
             "js": [
-                "src/content_script.js"
+                "src/content_script.js",
+                "src/vendor.js"
             ],
             "css": [
                 "src/content_script.css"

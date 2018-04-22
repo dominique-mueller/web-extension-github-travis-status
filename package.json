@@ -21,6 +21,9 @@
         "build": "webpack --mode production",
         "serve": "webpack --mode development --watch"
     },
+    "dependencies": {
+        "deep-equal": "1.0.x"
+    },
     "devDependencies": {
         "@types/chrome": "0.0.x",
         "clean-webpack-plugin": "0.1.x",

@@ -33,11 +33,11 @@ export interface TravisCiJob {
     id: number;
     number: string; // With 2 decimals
     state: TravisCiState;
-    started_at: string; // ISO format
-    finished_at: string; // ISO format
+    started_at: string; // ISO format, without ms
+    finished_at: string; // ISO format, without ms
 }
 
 /**
  * Travis CI State Type
  */
-export type TravisCiState = 'created' | 'started' | 'passed' | 'failed' | 'errored' | 'canceled';
+export type TravisCiState = 'received' | 'queued' | 'created' | 'started' | 'passed' | 'failed' | 'errored' | 'canceled';
