@@ -34,7 +34,7 @@ export class TravisCiClient {
      * @returns       - Promise, resolving with Travis CI stages (incl. jobs)
      */
     public fetchBuildStagesWithJobs( buildId: number ): Promise<TravisCiStages> {
-        return fetch( `${ this.baseUrl }/build/${ buildId }/stages?include=job.state,job.number,job.started_at,job.finished_at,job.created_at,job.updated_at`, {
+        return fetch( `${ this.baseUrl }/build/${ buildId }/stages?include=job.state,job.number,job.started_at,job.finished_at`, {
             method: 'GET',
             headers: new Headers( {
                 'Travis-API-Version': this.apiVersion.toString()

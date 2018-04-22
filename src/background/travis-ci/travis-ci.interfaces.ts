@@ -35,8 +35,6 @@ export interface TravisCiJob {
     state: TravisCiState;
     started_at: string; // ISO format, without ms
     finished_at: string; // ISO format, without ms
-    created_at: string; // ISO format
-    updated_at: string; // ISO format
 }
 
 /**

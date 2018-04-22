@@ -38,7 +38,12 @@ export class ExtensionBackground {
         this.travisCiClient
             .fetchBuildStagesWithJobs( request.buildId )
             .then( ( travisCiStages: TravisCiStages ) => {
-                sendResponse( travisCiStages );
+
+                // Skip if no stages exist (e.g. 'old' build style not yet using stages & jobs)
+                if ( travisCiStages.stages.length > 0 ) {
+                    sendResponse( travisCiStages );
+                }
+
             } );
         return true; // Asynchronous response
     }
