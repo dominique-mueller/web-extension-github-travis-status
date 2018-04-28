@@ -62,8 +62,8 @@ export class TravisCiStatus {
         this.stateIcons = {
             canceled: octicons.circleSlash,
             created: octicons.primitiveDot,
-            errored: octicons.x,
-            failed: octicons.alert,
+            errored: octicons.alert,
+            failed: octicons.x,
             passed: octicons.check,
             started: octicons.primitiveDot,
             queued: octicons.primitiveDot,

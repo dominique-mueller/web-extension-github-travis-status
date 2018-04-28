@@ -66,10 +66,15 @@ module.exports = {
                         name: manifestJson.name,
                         description: packageJson.description,
                         version: packageJson.version,
+                        homepage_url: packageJson.homepage,
                         ...manifestJson
                     };
                     return JSON.stringify( newManifestJson, null, '\t' );
                 }
+            },
+            {
+                from: path.resolve( 'assets', '*.png' ),
+                to: path.resolve( 'dist' )
             }
         ] )
     ],
