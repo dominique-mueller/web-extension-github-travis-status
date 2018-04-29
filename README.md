@@ -1,5 +1,7 @@
 <div align="center">
 
+![Github & Travis CI Enhance Status Logo](/assets/icon.png?raw=true)
+
 # web-extension-github-travis-status
 
 **Web Extension enhancing the Travis CI status on GitHub pull request pages.**
@@ -22,8 +24,6 @@ the Travis CI web application.
 The "GitHub & Travis CI: Enhance Status" web extension, once installed, enhances the build status by also showing the build jobs in the UI,
 including the real-time status and runtime. Plus, it provides a link for directly jumping into a build job log in Travis CI.
 
-![Github & Travis CI Enhance Status Preview](/assets/screenshot-01.png?raw=true)
-
 <br><br><br>
 
 ## How to install
@@ -34,31 +34,33 @@ TODO: Link to Chrome Web Store
 
 ## Development details
 
-### Running locally
+### Setup locally
 
-1. Clone the repository:
+Clone the repository & install all dependencies:
 
 ```
 git clone https://github.com/dominique-mueller/web-extension-github-travis-status.git
-```
-
-2. Install all dependencies:
-
-```
+cd web-extension-github-travis-status
 npm install
 ```
 
-3. Create production build:
+<br>
+
+### Build steps
+
+Create production build (written into the `dist` folder):
 
 ```
 npm run build
 ```
 
+<br>
+
 ### Toolchain
 
-- The project uses TypeScript, plus the `@types/chrome` typings package
-- Webpack is used to create the production bundle, change the `manfiest.json` file and copy assets
-- The icon, promotion images and screenshots are created using Adobe After Effects, plus a Chrome Browser Mockup PSD file
+- The project is written in TypeScript, using the `@types/chrome` typings package
+- We use Webpack to create the production bundle, update the `manfiest.json` file and copy assets
+- The icon, promotional images and screenshots are created using Adobe After Effects
 
 <br><br><br>
 
