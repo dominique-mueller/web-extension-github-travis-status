@@ -26,12 +26,6 @@ including the real-time status and runtime. Plus, it provides a link for directl
 
 <br><br><br>
 
-## How to install
-
-TODO: Link to Chrome Web Store
-
-<br><br><br>
-
 ## Development details
 
 ### Setup locally
@@ -44,17 +38,13 @@ cd web-extension-github-travis-status
 npm install
 ```
 
-<br>
-
-### Build steps
+### Build
 
 Create production build (written into the `dist` folder):
 
 ```
 npm run build
 ```
-
-<br>
 
 ### Toolchain
 
