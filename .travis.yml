@@ -45,8 +45,6 @@ jobs:
       install:
         - npm install -g npm
         - npm install
-      script:
-        - npm run build
       before_deploy:
         # Login to Git to be able to make commits (required by automatic-release)
         - git config --global user.name "dominique-mueller";

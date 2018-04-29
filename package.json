@@ -30,7 +30,7 @@
     ],
     "scripts": {
         "build": "webpack --mode production",
-        "release": "automatic-release && copyfiles package.json CHANGELOG.md LICENSE README.md dist"
+        "release": "automatic-release && npm run build && copyfiles package.json CHANGELOG.md LICENSE README.md dist"
     },
     "dependencies": {
         "deep-equal": "1.0.x"
