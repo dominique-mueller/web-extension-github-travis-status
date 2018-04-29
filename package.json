@@ -16,25 +16,39 @@
     "bugs": {
         "url": "https://github.com/dominique-mueller/web-extension-github-travis-status/issues"
     },
-    "keywords": [],
+    "keywords": [
+        "github",
+        "travis",
+        "pr",
+        "integration",
+        "stage",
+        "job",
+        "details",
+        "enhanced",
+        "extended",
+        "ci"
+    ],
     "scripts": {
-        "build": "webpack --mode production"
+        "build": "webpack --mode production",
+        "release": "automatic-release && copyfiles package.json CHANGELOG.md LICENSE README.md dist"
     },
     "dependencies": {
         "deep-equal": "1.0.x"
     },
     "devDependencies": {
         "@types/chrome": "0.0.x",
+        "automatic-release": "1.1.x",
         "clean-webpack-plugin": "0.1.x",
         "copy-webpack-plugin": "4.5.x",
+        "copyfiles": "2.0.x",
         "css-loader": "0.28.x",
         "extract-loader": "2.0.x",
         "file-loader": "1.1.x",
-        "node-sass": "4.8.x",
+        "node-sass": "4.9.x",
         "sass-loader": "7.0.x",
         "ts-loader": "4.2.x",
         "typescript": "2.8.x",
-        "webpack": "4.6.x",
-        "webpack-cli": "2.0.x"
+        "webpack-cli": "2.0.x",
+        "webpack": "4.6.x"
     }
 }

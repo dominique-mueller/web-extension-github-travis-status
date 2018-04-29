@@ -1,6 +1,6 @@
 <div align="center">
 
-![Github & Travis CI Enhance Status Logo](/assets/icon.png?raw=true)
+![Github & Travis CI Enhance Status Logo](/assets/icon-48.png?raw=true)
 
 # web-extension-github-travis-status
 
