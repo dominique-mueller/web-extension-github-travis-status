@@ -3,6 +3,7 @@ node_modules/
 
 # Build
 dist/
+Adobe After Effects Auto-Speichern/
 
 # Development
 .vscode
