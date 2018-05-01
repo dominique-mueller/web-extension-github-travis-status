@@ -1,5 +1,5 @@
 import { TravisCiClient } from './travis-ci/travis-ci.client';
-import { TravisCiStages } from './travis-ci/travis-ci.interfaces';
+import { TravisCiBuild } from './travis-ci/travis-ci.interfaces';
 
 /**
  * Background
@@ -36,14 +36,9 @@ export class ExtensionBackground {
      */
     private handleContentScriptRequest( request: any, sender: chrome.runtime.MessageSender, sendResponse: ( response: any ) => void ): boolean {
         this.travisCiClient
-            .fetchBuildStagesWithJobs( request.buildId )
-            .then( ( travisCiStages: TravisCiStages ) => {
-
-                // Skip if no stages exist (e.g. 'old' build style not yet using stages & jobs)
-                if ( travisCiStages.stages.length > 0 ) {
-                    sendResponse( travisCiStages );
-                }
-
+            .fetchBuildDetails( request.buildId )
+            .then( ( travisCiBuild: TravisCiBuild ) => {
+                sendResponse( travisCiBuild );
             } );
         return true; // Asynchronous response
     }

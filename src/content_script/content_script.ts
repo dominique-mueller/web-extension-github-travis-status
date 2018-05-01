@@ -1,7 +1,7 @@
 import * as deepEqual from 'deep-equal';
 
 import { TravisCiStatus } from './travis-ci-status';
-import { TravisCiStages } from 'background/travis-ci/travis-ci.interfaces';
+import { TravisCiBuild } from 'background/travis-ci/travis-ci.interfaces';
 
 /**
  * Content Script
@@ -16,7 +16,7 @@ export class ExtensionContentScript {
     /**
      * Travis CI stages with jobs data
      */
-    private travisCiStages: TravisCiStages;
+    private travisCiBuild: TravisCiBuild;
 
     /**
      * Polling interval in ms
@@ -67,14 +67,14 @@ export class ExtensionContentScript {
         const travisCiStatus: TravisCiStatus = new TravisCiStatus( mergeStatusItem );
 
         // Initial rendering
-        const hasPreviousTravisCiStages: boolean = !!this.travisCiStages;
-        if ( hasPreviousTravisCiStages ) { // Use 'cached' (aka previous) data if available
-            travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
+        const hasFetchedBuildDetails: boolean = !!this.travisCiBuild;
+        if ( hasFetchedBuildDetails ) { // Use 'cached' (aka previous) data if available
+            travisCiStatus.renderDetailedTravisCiStatus( this.travisCiBuild );
             travisCiStatus.fixMergeStatusCheckToggle();
         }
-        this.travisCiStages = await this.fetchBuildData( travisCiStatus.buildId );
-        travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
-        if ( !hasPreviousTravisCiStages ) {
+        this.travisCiBuild = await this.fetchBuildDetails( travisCiStatus.buildId );
+        travisCiStatus.renderDetailedTravisCiStatus( this.travisCiBuild );
+        if ( !hasFetchedBuildDetails ) {
             travisCiStatus.fixMergeStatusCheckToggle();
         }
 
@@ -82,10 +82,10 @@ export class ExtensionContentScript {
         this.intervalToken = setInterval( async () => {
 
             // Skip re-rendering if polling got canceled, or the fetched data brings no update to the table
-            const travisCiStagesUpdated: TravisCiStages = await this.fetchBuildData( travisCiStatus.buildId );
-            if ( this.intervalToken && !deepEqual( travisCiStagesUpdated, this.travisCiStages, { strict: true } ) ) {
-                this.travisCiStages = travisCiStagesUpdated;
-                travisCiStatus.renderDetailedTravisCiStatus( this.travisCiStages.stages );
+            const travisCiBuildUpdated: TravisCiBuild = await this.fetchBuildDetails( travisCiStatus.buildId );
+            if ( this.intervalToken && !deepEqual( travisCiBuildUpdated, this.travisCiBuild, { strict: true } ) ) {
+                this.travisCiBuild = travisCiBuildUpdated;
+                travisCiStatus.renderDetailedTravisCiStatus( this.travisCiBuild );
             }
 
         }, this.pollingInterval );
@@ -105,13 +105,13 @@ export class ExtensionContentScript {
      * Request build details
      *
      * @param   buildId - Build ID
-     * @returns         - Promise, resolving with Travis CI stages incl. jobs
+     * @returns         - Promise, resolving with Travis CI build details
      */
-    private fetchBuildData( buildId: number ): Promise<TravisCiStages> {
-        return new Promise( ( resolve: ( stages: TravisCiStages ) => void, reject: () => void ) => {
+    private fetchBuildDetails( buildId: number ): Promise<TravisCiBuild> {
+        return new Promise( ( resolve: ( stages: TravisCiBuild ) => void, reject: () => void ) => {
             chrome.runtime.sendMessage( {
                 buildId
-            }, ( response: TravisCiStages ) => {
+            }, ( response: TravisCiBuild ) => {
                 resolve( response );
             } );
         } );

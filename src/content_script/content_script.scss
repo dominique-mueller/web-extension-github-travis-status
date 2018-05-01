@@ -17,7 +17,7 @@
 .extension {
 
     &__details {
-        padding: 0 !important;
+        padding: 10px 15px 20px 52px !important;
         margin-top: -1px; // Hide border between Travis CI status and its details by overlapping
     }
 
@@ -75,7 +75,6 @@
     }
 
     &__stages {
-        padding: 10px 15px 20px 52px;
         list-style-type: none;
     }
 
@@ -84,6 +83,10 @@
 
         & + & {
             margin-top: 15px;
+        }
+
+        &-heading {
+            margin-bottom: 8px;
         }
 
         &-status {
@@ -101,7 +104,6 @@
     }
 
     &__jobs {
-        margin-top: 8px;
         list-style-type: none;
     }
 
