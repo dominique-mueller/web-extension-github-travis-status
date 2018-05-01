@@ -1,4 +1,4 @@
-import { TravisCiStage, TravisCiJob } from 'background/travis-ci/travis-ci.interfaces';
+import { TravisCiStage, TravisCiJob, TravisCiBuild } from 'background/travis-ci/travis-ci.interfaces';
 import { octicons } from './octicons';
 
 /**
@@ -74,15 +74,15 @@ export class TravisCiStatus {
     /**
      * Enhance Travis CI status
      *
-     * @param stagesWithJobs - Stages with jobs
+     * @param build - Build details
      */
-    public renderDetailedTravisCiStatus( stagesWithJobs: Array<TravisCiStage> ): void {
+    public renderDetailedTravisCiStatus( build: TravisCiBuild ): void {
 
         // Cleanup first
         this.cleanupRuntimeIntervals();
 
         // Create element
-        const statusDetailsElement: HTMLDivElement = this.createStatusDetailsElement( stagesWithJobs );
+        const statusDetailsElement: HTMLDivElement = this.createStatusDetailsElement( build );
 
         // Insert into DOM
         if ( this.activeStatusDetailsNode ) {
@@ -130,18 +130,23 @@ export class TravisCiStatus {
     /**
      * Create status details document fragment
      *
-     * @param   stages - Stages
-     * @returns        - Merge status details DOM element
+     * @param   build - Build details
+     * @returns       - Merge status details DOM element
      */
-    private createStatusDetailsElement( stages: Array<TravisCiStage> ): HTMLDivElement {
+    private createStatusDetailsElement( build: TravisCiBuild ): HTMLDivElement {
 
         // Create extended merge status
         const statusItemElement: HTMLDivElement = document.createElement( 'div' );
         statusItemElement.classList.add( 'merge-status-item', 'extension__details' );
 
-        // Create stages
-        const stagesElement: HTMLUListElement = this.createStagesElement( stages );
-        statusItemElement.appendChild( stagesElement );
+        // Create stages and jobs, or only jobs if stages are not being used
+        if ( build.stages.length > 0 ) {
+            const stagesElement: HTMLUListElement = this.createStagesElement( build.stages, build.jobs );
+            statusItemElement.appendChild( stagesElement );
+        } else {
+            const jobsElement: HTMLUListElement = this.createJobsElement( build.jobs );
+            statusItemElement.appendChild( jobsElement );
+        }
 
         return statusItemElement;
 
@@ -150,18 +155,22 @@ export class TravisCiStatus {
     /**
      * Creates stages element
      *
-     * @param   stages - Stages
-     * @returns        - Stages DOM element (ul)
+     * @param   buildStages - Stages of build
+     * @param   buildJobs   - Jobs of build
+     * @returns             - Stages DOM element (ul)
      */
-    private createStagesElement( stages: Array<TravisCiStage> ): HTMLUListElement {
+    private createStagesElement( buildStages: Array<TravisCiStage>, buildJobs: Array<TravisCiJob> ): HTMLUListElement {
 
         // Stages
         const stagesElement: HTMLUListElement = document.createElement( 'ul' );
         stagesElement.classList.add( 'extension__stages' );
 
         // Single stages
-        stages.forEach( ( stage: TravisCiStage ): void => {
-            const stageElement: HTMLLIElement = this.createStageElement( stage );
+        buildStages.forEach( ( buildStage: TravisCiStage ): void => {
+            const stageJobs: Array<TravisCiJob> = buildJobs.filter( ( buildJob: TravisCiJob ): boolean => {
+                return buildJob.stage.id === buildStage.id;
+            } );
+            const stageElement: HTMLLIElement = this.createStageElement( buildStage, stageJobs );
             stagesElement.appendChild( stageElement );
         } );
 
@@ -173,9 +182,10 @@ export class TravisCiStatus {
      * Create stage element
      *
      * @param   stage - Stage
+     * @param   jobs  - Stage jobs
      * @returns       - Stage DOM element (li)
      */
-    private createStageElement( stage: TravisCiStage ): HTMLLIElement {
+    private createStageElement( stage: TravisCiStage, stageJobs: Array<TravisCiJob> ): HTMLLIElement {
 
         // Stage
         const stageElement: HTMLLIElement = document.createElement( 'li' );
@@ -207,7 +217,7 @@ export class TravisCiStatus {
         stageNameElement.innerText = stage.name;
         stageHeadingElement.appendChild( stageNameElement );
 
-        const jobsElement: HTMLUListElement = this.createJobsElement( stage.jobs );
+        const jobsElement: HTMLUListElement = this.createJobsElement( stageJobs );
         stageElement.appendChild( jobsElement );
 
         return stageElement;

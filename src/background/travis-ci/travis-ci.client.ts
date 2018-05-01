@@ -1,4 +1,4 @@
-import { TravisCiStages, TravisCiStage, TravisCiJob } from './travis-ci.interfaces';
+import { TravisCiBuild, TravisCiStage, TravisCiJob } from './travis-ci.interfaces';
 
 /**
  * Travis CI client
@@ -24,35 +24,33 @@ export class TravisCiClient {
     }
 
     /**
-     * Fetch build stages incl. jobs
+     * Fetch build details
      *
      * Documentation:
-     * - Fetching stages: https://developer.travis-ci.org/resource/stages
+     * - Fetching build details: https://developer.travis-ci.org/resource/build
      * - Eager loading (here used to load more job info): https://developer.travis-ci.org/eager-loading
      *
      * @param buildId - Build ID
-     * @returns       - Promise, resolving with Travis CI stages (incl. jobs)
+     * @returns       - Promise, resolving with Travis CI build details
      */
-    public fetchBuildStagesWithJobs( buildId: number ): Promise<TravisCiStages> {
-        return fetch( `${ this.baseUrl }/build/${ buildId }/stages?include=job.state,job.number,job.started_at,job.finished_at`, {
+    public fetchBuildDetails( buildId: number ): Promise<TravisCiBuild> {
+        return fetch( `${ this.baseUrl }/build/${ buildId }?include=job.stage,job.state,job.number,job.started_at,job.finished_at`, {
             method: 'GET',
             headers: new Headers( {
                 'Travis-API-Version': this.apiVersion.toString()
             } )
         } )
-            .then( ( response: Response ): Promise<TravisCiStages> => {
+            .then( ( response: Response ): Promise<TravisCiBuild> => {
                 return response.json();
             } )
-            .then( ( travisCiStages: TravisCiStages ): Promise<TravisCiStages> => {
-                travisCiStages.stages.sort( ( a: TravisCiStage, b: TravisCiStage ): number => {
+            .then( ( travisCiBuild: TravisCiBuild ): Promise<TravisCiBuild> => {
+                travisCiBuild.stages.sort( ( a: TravisCiStage, b: TravisCiStage ): number => {
                     return a.number - b.number;
                 } );
-                travisCiStages.stages.forEach( ( travisCiStage: TravisCiStage ): void => {
-                    travisCiStage.jobs.sort( ( a: TravisCiJob, b: TravisCiJob ): number => {
-                        return parseFloat( a.number ) - parseFloat( b.number );
-                    } );
+                travisCiBuild.jobs.sort( ( a: TravisCiJob, b: TravisCiJob ): number => {
+                    return parseFloat( a.number ) - parseFloat( b.number );
                 } );
-                return Promise.resolve( travisCiStages );
+                return Promise.resolve( travisCiBuild );
             } );
     }
 
