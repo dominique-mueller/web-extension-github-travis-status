@@ -1,7 +1,7 @@
 {
 	"name": "web-extension-github-travis-status",
 	"description": "Enhances the Travis CI status on GitHub pull request pages.",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"author": {
 		"name": "Dominique Müller",
 		"email": "dominique.m.mueller@gmail.com",
