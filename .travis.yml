@@ -56,10 +56,10 @@ jobs:
         # Publish the dist folder
         - cd dist
       deploy:
-        - provider: npm
-          email: dominique.m.mueller@gmail.com
-          api_key: "$NPM_TOKEN"
-          skip_cleanup: true
+        provider: npm
+        email: dominique.m.mueller@gmail.com
+        api_key: "$NPM_TOKEN"
+        skip_cleanup: true
       after_deploy:
         - cd ..
         - npm run publish
