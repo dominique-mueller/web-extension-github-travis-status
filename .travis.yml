@@ -53,15 +53,7 @@ jobs:
         - echo "https://$GH_TOKEN:@github.com" > .git/credentials;
         # Do release
         - npm run release
-        # Publish the dist folder
-        - cd dist
       deploy:
-        - provider: npm
-          email: dominique.m.mueller@gmail.com
-          api_key: "$NPM_TOKEN"
-          skip_cleanup: true
         - provider: script
           skip_cleanup: true
           script: npm run publish
-      after_deploy:
-        - cd ..
