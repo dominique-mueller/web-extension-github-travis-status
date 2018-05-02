@@ -31,7 +31,7 @@
 	"scripts": {
 		"build": "webpack --mode production",
 		"release": "automatic-release && npm run build && copyfiles package.json CHANGELOG.md LICENSE README.md dist",
-		"publish": "webstore upload --auto-publish"
+		"publish": "cd dist && webstore upload --auto-publish && cd .."
 	},
 	"dependencies": {
 		"deep-equal": "1.0.x"
