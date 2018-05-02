@@ -62,7 +62,7 @@ export class ExtensionBackground {
      * @returns     - Flag, describing whether the URL is or is not a GitHub Pull Request URL
      */
     private isGithubPullRequestUrl( url: string ): boolean {
-        return /^https:\/\/github\.com\/.+\/.+\/pull\/\d+$/.test( url );
+        return /^https:\/\/github\.com\/.+\/.+\/pull\/\d+/.test( url );
     }
 
 }
