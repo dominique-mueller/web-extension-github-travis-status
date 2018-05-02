@@ -2,7 +2,7 @@ const path = require( 'path' );
 
 const webpack = require( 'webpack' );
 const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
-const CopyWebpackPlugin = require( 'copy-webpack-plugin' )
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 
 const packageJson = require( './package.json' );
 
@@ -73,7 +73,7 @@ module.exports = {
                 }
             },
             {
-                from: path.resolve( 'assets', '*.png' ),
+                from: path.resolve( 'assets', 'icon-*.png' ),
                 to: path.resolve( 'dist' )
             }
         ] )

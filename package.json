@@ -30,7 +30,9 @@
 	],
 	"scripts": {
 		"build": "webpack --mode production",
-		"release": "automatic-release && npm run build && copyfiles package.json CHANGELOG.md LICENSE README.md dist"
+		"release": "automatic-release && npm run build && copyfiles package.json CHANGELOG.md LICENSE README.md dist",
+		"package": "cd dist && nodezip -c web-extension-github-travis-status.zip . && cd ..",
+		"publish": ""
 	},
 	"dependencies": {
 		"deep-equal": "1.0.x"
@@ -38,6 +40,7 @@
 	"devDependencies": {
 		"@types/chrome": "0.0.x",
 		"automatic-release": "1.1.x",
+		"chrome-webstore-upload-cli": "1.1.x",
 		"clean-webpack-plugin": "0.1.x",
 		"copy-webpack-plugin": "4.5.x",
 		"copyfiles": "2.0.x",
@@ -45,6 +48,7 @@
 		"extract-loader": "2.0.x",
 		"file-loader": "1.1.x",
 		"node-sass": "4.9.x",
+		"node-zip": "1.1.x",
 		"sass-loader": "7.0.x",
 		"ts-loader": "4.2.x",
 		"typescript": "2.8.x",
