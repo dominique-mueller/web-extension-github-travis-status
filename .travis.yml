@@ -42,8 +42,9 @@ jobs:
         - git checkout -qf "$TRAVIS_COMMIT";
         #  Fix Travis CI issue of detached heads in git
         - git checkout master
-      install:
+      before_install:
         - npm install -g npm
+      install:
         - npm install
       before_deploy:
         # Login to Git to be able to make commits (required by automatic-release)
@@ -56,9 +57,12 @@ jobs:
         # Publish the dist folder
         - cd dist
       deploy:
-        provider: npm
-        email: dominique.m.mueller@gmail.com
-        api_key: "$NPM_TOKEN"
-        skip_cleanup: true
+        - provider: npm
+          email: dominique.m.mueller@gmail.com
+          api_key: "$NPM_TOKEN"
+          skip_cleanup: true
+        - provider: script
+          skip_cleanup: true
+          script: npm run publish
       after_deploy:
         - cd ..
