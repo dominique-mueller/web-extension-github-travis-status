@@ -4,6 +4,14 @@ Also see the **[release page](https://github.com/dominique-mueller/web-extension
 
 <br>
 
+## [1.1.1](https://github.com/dominique-mueller/web-extension-github-travis-status/releases/tag/1.1.1) (2018-05-02)
+
+### Bug Fixes
+
+* **background:** Loosen GitHub PR URL regular expression, now allowing hash-based additions ([#20](https://github.com/dominique-mueller/web-extension-github-travis-status/issues/20)) ([395fbad](https://github.com/dominique-mueller/web-extension-github-travis-status/commit/395fbad)), closes [#17](https://github.com/dominique-mueller/web-extension-github-travis-status/issues/17)
+
+<br>
+
 ## [1.1.0](https://github.com/dominique-mueller/web-extension-github-travis-status/releases/tag/1.1.0) (2018-05-01)
 
 ### Features
