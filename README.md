@@ -6,7 +6,6 @@
 
 **Web Extension enhancing the Travis CI status on GitHub pull request pages.**
 
-[![npm version](https://img.shields.io/npm/v/web-extension-github-travis-status.svg?maxAge=3600&style=flat)](https://www.npmjs.com/package/web-extension-github-travis-status)
 [![dependency status](https://img.shields.io/david/dominique-mueller/web-extension-github-travis-status.svg?maxAge=3600&style=flat)](https://david-dm.org/dominique-mueller/web-extension-github-travis-status)
 [![travis ci build status](https://img.shields.io/travis/dominique-mueller/web-extension-github-travis-status/master.svg?maxAge=3600&style=flat)](https://travis-ci.org/dominique-mueller/web-extension-github-travis-status)
 [![license](https://img.shields.io/npm/l/web-extension-github-travis-status.svg?maxAge=3600&style=flat)](https://github.com/dominique-mueller/web-extension-github-travis-status/LICENSE)
