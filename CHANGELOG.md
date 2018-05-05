@@ -4,6 +4,14 @@ Also see the **[release page](https://github.com/dominique-mueller/web-extension
 
 <br>
 
+## [1.1.2](https://github.com/dominique-mueller/web-extension-github-travis-status/releases/tag/1.1.2) (2018-05-05)
+
+### Bug Fixes
+
+* **ui:** Fix job ordering logic ([#26](https://github.com/dominique-mueller/web-extension-github-travis-status/issues/26)) ([a4fca13](https://github.com/dominique-mueller/web-extension-github-travis-status/commit/a4fca13)), closes [#25](https://github.com/dominique-mueller/web-extension-github-travis-status/issues/25)
+
+<br>
+
 ## [1.1.1](https://github.com/dominique-mueller/web-extension-github-travis-status/releases/tag/1.1.1) (2018-05-02)
 
 ### Bug Fixes
