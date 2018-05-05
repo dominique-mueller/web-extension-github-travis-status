@@ -48,7 +48,7 @@ export class TravisCiClient {
                     return a.number - b.number;
                 } );
                 travisCiBuild.jobs.sort( ( a: TravisCiJob, b: TravisCiJob ): number => {
-                    return parseFloat( a.number ) - parseFloat( b.number );
+                    return parseInt( a.number.split( '.' )[ 1 ] ) - parseInt( b.number.split( '.' )[ 1 ] );
                 } );
                 return Promise.resolve( travisCiBuild );
             } );
