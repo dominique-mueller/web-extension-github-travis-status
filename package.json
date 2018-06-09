@@ -48,7 +48,7 @@
 		"file-loader": "1.1.x",
 		"node-sass": "4.9.x",
 		"sass-loader": "7.0.x",
-		"ts-loader": "4.2.x",
+		"ts-loader": "4.4.x",
 		"typescript": "2.8.x",
 		"webpack-cli": "2.1.x",
 		"webpack": "4.7.x"
