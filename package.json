@@ -50,7 +50,7 @@
 		"sass-loader": "7.0.x",
 		"ts-loader": "4.4.x",
 		"typescript": "2.9.x",
-		"webpack-cli": "2.1.x",
+		"webpack-cli": "3.0.x",
 		"webpack": "4.12.x"
 	}
 }
