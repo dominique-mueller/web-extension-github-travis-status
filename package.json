@@ -47,7 +47,7 @@
 		"extract-loader": "2.0.x",
 		"file-loader": "1.1.x",
 		"node-sass": "4.9.x",
-		"sass-loader": "7.0.x",
+		"sass-loader": "8.0.x",
 		"ts-loader": "5.0.x",
 		"typescript": "3.0.x",
 		"webpack-cli": "3.0.x",
