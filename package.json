@@ -34,7 +34,7 @@
 		"publish": "cd dist && webstore upload --auto-publish && cd .."
 	},
 	"dependencies": {
-		"deep-equal": "1.0.x"
+		"deep-equal": "1.1.x"
 	},
 	"devDependencies": {
 		"@types/chrome": "0.0.x",
