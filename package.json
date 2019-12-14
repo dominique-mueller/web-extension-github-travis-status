@@ -41,7 +41,7 @@
 		"automatic-release": "1.1.x",
 		"chrome-webstore-upload-cli": "1.1.x",
 		"clean-webpack-plugin": "0.1.x",
-		"copy-webpack-plugin": "4.5.x",
+		"copy-webpack-plugin": "5.1.x",
 		"copyfiles": "2.0.x",
 		"css-loader": "1.0.x",
 		"extract-loader": "2.0.x",
