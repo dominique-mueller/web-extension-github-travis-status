@@ -43,7 +43,7 @@
 		"clean-webpack-plugin": "0.1.x",
 		"copy-webpack-plugin": "4.5.x",
 		"copyfiles": "2.0.x",
-		"css-loader": "1.0.x",
+		"css-loader": "3.6.x",
 		"extract-loader": "2.0.x",
 		"file-loader": "1.1.x",
 		"node-sass": "4.9.x",
