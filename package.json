@@ -51,6 +51,6 @@
 		"ts-loader": "5.0.x",
 		"typescript": "3.0.x",
 		"webpack-cli": "3.0.x",
-		"webpack": "4.17.x"
+		"webpack": "4.44.x"
 	}
 }
