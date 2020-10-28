@@ -45,7 +45,7 @@
 		"copyfiles": "2.0.x",
 		"css-loader": "1.0.x",
 		"extract-loader": "2.0.x",
-		"file-loader": "1.1.x",
+		"file-loader": "6.2.x",
 		"node-sass": "4.9.x",
 		"sass-loader": "7.0.x",
 		"ts-loader": "5.0.x",
