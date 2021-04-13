@@ -1,3 +1,20 @@
+<br>
+
+---
+
+**DEPRECATION NOTICE**
+
+This web extension is now deprecated because **[Travis CI](https://travis-ci.org/)** not only moved domains but also no longer offers
+unlimited build time for open source projects (see
+[this lovely article](https://www.jeffgeerling.com/blog/2020/travis-cis-new-pricing-plan-threw-wrench-my-open-source-works)).
+
+I can recommend everyone to move to **[GitHub Actions](https://github.com/features/actions)** - it's unlimited for open source, and because
+it's built by the lovely developers of GitHub it's integrated very well, e.g. it already shows every build step in your PRs.
+
+---
+
+<br><br>
+
 <div align="center">
 
 ![Github & Travis CI Enhance Status Logo](/assets/icon-48.png?raw=true)
