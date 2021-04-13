@@ -1,56 +1,59 @@
 {
-	"name": "web-extension-github-travis-status",
-	"description": "Enhances the Travis CI status on GitHub pull request pages.",
-	"version": "1.1.1",
-	"author": {
-		"name": "Dominique Müller",
-		"email": "dominique.m.mueller@gmail.com",
-		"url": "https://www.devdom.io/"
-	},
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/dominique-mueller/web-extension-github-travis-status"
-	},
-	"homepage": "https://github.com/dominique-mueller/web-extension-github-travis-status",
-	"bugs": {
-		"url": "https://github.com/dominique-mueller/web-extension-github-travis-status/issues"
-	},
-	"keywords": [
-		"github",
-		"travis",
-		"pr",
-		"integration",
-		"stage",
-		"job",
-		"details",
-		"enhanced",
-		"extended",
-		"ci"
-	],
-	"scripts": {
-		"build": "webpack --mode production",
-		"release": "automatic-release && npm run build && copyfiles package.json CHANGELOG.md LICENSE README.md dist",
-		"publish": "cd dist && webstore upload --auto-publish && cd .."
-	},
-	"dependencies": {
-		"deep-equal": "1.0.x"
-	},
-	"devDependencies": {
-		"@types/chrome": "0.0.x",
-		"automatic-release": "1.1.x",
-		"chrome-webstore-upload-cli": "1.1.x",
-		"clean-webpack-plugin": "0.1.x",
-		"copy-webpack-plugin": "4.5.x",
-		"copyfiles": "2.0.x",
-		"css-loader": "1.0.x",
-		"extract-loader": "2.0.x",
-		"file-loader": "1.1.x",
-		"node-sass": "4.9.x",
-		"sass-loader": "7.0.x",
-		"ts-loader": "5.0.x",
-		"typescript": "3.0.x",
-		"webpack-cli": "3.0.x",
-		"webpack": "4.17.x"
-	}
+  "name": "web-extension-github-travis-status",
+  "description": "Enhances the Travis CI status on GitHub pull request pages.",
+  "version": "1.1.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dominique-mueller/web-extension-github-travis-status"
+  },
+  "keywords": [
+    "github",
+    "travis",
+    "pr",
+    "integration",
+    "stage",
+    "job",
+    "details",
+    "enhanced",
+    "extended",
+    "ci"
+  ],
+  "scripts": {
+    "build": "npm run build:clean && npm run build:bundle && npm run build:assets",
+    "build:assets": "copyfiles package.json CHANGELOG.md LICENSE README.md dist",
+    "build:bundle": "webpack --mode production",
+    "build:clean": "rimraf -r dist",
+    "lint": "eslint src/** --max-warnings 0",
+    "lint:fix": "eslint src/** --max-warnings 0 --fix",
+    "publish": "cd dist && webstore upload --auto-publish && cd .."
+  },
+  "dependencies": {
+    "deep-equal": "2.0.x"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.0.x",
+    "@types/deep-equal": "1.0.x",
+    "@typescript-eslint/eslint-plugin": "4.14.x",
+    "@typescript-eslint/parser": "4.14.x",
+    "chrome-webstore-upload-cli": "1.2.x",
+    "copy-webpack-plugin": "8.1.x",
+    "copyfiles": "2.4.x",
+    "css-loader": "5.2.x",
+    "eslint-config-prettier": "7.2.x",
+    "eslint-plugin-import": "2.22.x",
+    "eslint-plugin-prettier": "3.3.x",
+    "eslint-plugin-simple-import-sort": "7.0.x",
+    "eslint": "7.24.x",
+    "extract-loader": "5.1.x",
+    "file-loader": "6.2.x",
+    "prettier": "2.2.x",
+    "rimraf": "3.0.x",
+    "sass-loader": "11.0.x",
+    "sass": "1.32.x",
+    "ts-loader": "8.1.x",
+    "typescript": "4.2.x",
+    "webpack-cli": "4.6.x",
+    "webpack": "5.32.x"
+  }
 }
