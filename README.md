@@ -4,12 +4,7 @@
 
 # web-extension-github-travis-status
 
-**Web Extension enhancing the Travis CI status on GitHub pull request pages.**
-
-[![npm version](https://img.shields.io/npm/v/web-extension-github-travis-status.svg?maxAge=3600&style=flat)](https://www.npmjs.com/package/web-extension-github-travis-status)
-[![dependency status](https://img.shields.io/david/dominique-mueller/web-extension-github-travis-status.svg?maxAge=3600&style=flat)](https://david-dm.org/dominique-mueller/web-extension-github-travis-status)
-[![travis ci build status](https://img.shields.io/travis/dominique-mueller/web-extension-github-travis-status/master.svg?maxAge=3600&style=flat)](https://travis-ci.org/dominique-mueller/web-extension-github-travis-status)
-[![license](https://img.shields.io/npm/l/web-extension-github-travis-status.svg?maxAge=3600&style=flat)](https://github.com/dominique-mueller/web-extension-github-travis-status/LICENSE)
+**Web Extension enhancing the [Travis CI](https://travis-ci.org/) status on [GitHub](https://github.com/) pull request pages.**
 
 </div>
 
@@ -38,6 +33,8 @@ cd web-extension-github-travis-status
 npm install
 ```
 
+<br>
+
 ### Build
 
 Create production build (written into the `dist` folder):
@@ -46,18 +43,10 @@ Create production build (written into the `dist` folder):
 npm run build
 ```
 
+<br>
+
 ### Toolchain
 
 - The project is written in TypeScript, using the `@types/chrome` typings package
 - We use Webpack to create the production bundle, update the `manfiest.json` file and copy assets
 - The icon, promotional images and screenshots are created using Adobe After Effects
-
-<br><br><br>
-
-## Creator
-
-**Dominique Müller**
-
-- E-Mail: **[dominique.m.mueller@gmail.com](mailto:dominique.m.mueller@gmail.com)**
-- Website: **[www.devdom.io](https://www.devdom.io/)**
-- Twitter: **[@itsdevdom](https://twitter.com/itsdevdom)**
