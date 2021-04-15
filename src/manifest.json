@@ -1,34 +1,21 @@
 {
-    "manifest_version": 2,
-    "name": "GitHub & Travis CI - Enhanced Status",
-    "icons": {
-        "48": "assets/icon-48.png",
-        "16": "assets/icon-16.png",
-        "128": "assets/icon-128.png"
-    },
-    "permissions": [
-        "https://github.com/*",
-        "tabs",
-        "webNavigation"
-    ],
-    "background": {
-        "scripts": [
-            "src/background.js"
-        ],
-        "persistent": false
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "https://github.com/*"
-            ],
-            "js": [
-                "src/content_script.js",
-                "src/vendor.js"
-            ],
-            "css": [
-                "src/content_script.css"
-            ]
-        }
-    ]
+  "manifest_version": 2,
+  "name": "GitHub & Travis CI - Enhanced Status",
+  "icons": {
+    "48": "assets/icon-48.png",
+    "16": "assets/icon-16.png",
+    "128": "assets/icon-128.png"
+  },
+  "permissions": ["https://github.com/*", "tabs", "webNavigation"],
+  "background": {
+    "scripts": ["src/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["src/content_script.js", "src/vendor.js"],
+      "css": ["src/content_script.css"]
+    }
+  ]
 }

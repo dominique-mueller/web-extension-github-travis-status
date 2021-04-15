@@ -1,156 +1,149 @@
 // Overwrites
 
 .merge-status-list {
-    overflow-y: hidden !important; // Hide scrollbars otherwhise appearing during height-based animations
+  overflow-y: hidden !important; // Hide scrollbars otherwhise appearing during height-based animations
 }
 
 .branch-action-item {
-    &.open {
-        > .merge-status-list {
-            max-height: unset !important; // Don't use a max-height by default in order to prevent UI issues during re-renderings
-        }
+  &.open {
+    > .merge-status-list {
+      max-height: unset !important; // Don't use a max-height by default in order to prevent UI issues during re-renderings
     }
+  }
 }
 
 // Extension styles
 
 .extension {
+  &__details {
+    padding: 10px 15px 20px 52px !important;
+    margin-top: -1px; // Hide border between Travis CI status and its details by overlapping
+  }
 
-    &__details {
-        padding: 10px 15px 20px 52px !important;
-        margin-top: -1px; // Hide border between Travis CI status and its details by overlapping
+  &__icon {
+    display: block;
+    height: 16px;
+    width: auto;
+
+    &--canceled {
+      fill: #c8c9cb;
+      height: 15px;
+      margin: 1px 1px 0 0;
     }
 
-    &__icon {
-        display: block;
-        height: 16px;
-        width: auto;
-
-        &--canceled {
-            fill: #c8c9cb;
-            height: 15px;
-            margin: 1px 1px 0 0;
-        }
-
-        &--created {
-            margin: 1px -2px -1px 2px;
-            fill: #c8c9cb;
-        }
-
-        &--errored {
-            fill: #cb2431;
-        }
-
-        &--failed {
-            fill: #cb2431;
-        }
-
-        &--passed {
-            fill: #28a745;
-        }
-
-        &--started {
-            margin: 1px -2px -1px 2px;
-            fill: #dbab09;
-            opacity: .3;
-            animation: pulse 2s linear infinite .5s; // GitHub animation, same values - plus .5s offset (in comparison to runtime counter)
-        }
-
-        &--queued {
-            height: 14px;
-            margin: 1px -3px -1px 3px;
-            fill: #FFF;
-            stroke: #c8c9cb;
-            stroke-width: 2px;
-        }
-
-        &--received {
-            height: 14px;
-            margin: 1px -3px -1px 3px;
-            fill: #FFF;
-            stroke: #c8c9cb;
-            stroke-width: 2px;
-        }
-
+    &--created {
+      margin: 1px -2px -1px 2px;
+      fill: #c8c9cb;
     }
 
-    &__stages {
-        list-style-type: none;
+    &--errored {
+      fill: #cb2431;
     }
 
-    &__stage {
-        padding: 5px 0;
-
-        & + & {
-            margin-top: 15px;
-        }
-
-        &-heading {
-            margin-bottom: 8px;
-        }
-
-        &-status {
-            position: relative;
-            left: -3px;
-            margin: -4px; // Increase hover-able area for better tooltip usability
-            padding: 4px;
-            cursor: help;
-        }
-
-        &-name {
-            margin-left: 5px;
-        }
-
+    &--failed {
+      fill: #cb2431;
     }
 
-    &__jobs {
-        list-style-type: none;
+    &--passed {
+      fill: #28a745;
     }
 
-    &__job {
-        padding: 9px 16px 9px 12px;
-        border: 1px solid #e1e4e8;
-        background-color: #FFF;
-
-        & + & {
-            border-top: none;
-        }
-
-        &:first-child {
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
-        }
-
-        &:last-child {
-            border-bottom-left-radius: 3px;
-            border-bottom-right-radius: 3px;
-        }
-
-        &-status {
-            margin: -4px; // Increase hover-able area for better tooltip usability
-            padding: 4px;
-            cursor: help;
-        }
-
-        &-number {
-            margin-left: 8px;
-        }
-
-        &-details {
-            margin-left: auto;
-
-            &--disabled {
-                color: #c8c9cb;
-                cursor: default;
-
-                &:hover {
-                    text-decoration: none;
-                }
-
-            }
-
-        }
-
+    &--started {
+      margin: 1px -2px -1px 2px;
+      fill: #dbab09;
+      opacity: 0.3;
+      animation: pulse 2s linear infinite 0.5s; // GitHub animation, same values - plus .5s offset (in comparison to runtime counter)
     }
 
+    &--queued {
+      height: 14px;
+      margin: 1px -3px -1px 3px;
+      fill: #fff;
+      stroke: #c8c9cb;
+      stroke-width: 2px;
+    }
+
+    &--received {
+      height: 14px;
+      margin: 1px -3px -1px 3px;
+      fill: #fff;
+      stroke: #c8c9cb;
+      stroke-width: 2px;
+    }
+  }
+
+  &__stages {
+    list-style-type: none;
+  }
+
+  &__stage {
+    padding: 5px 0;
+
+    & + & {
+      margin-top: 15px;
+    }
+
+    &-heading {
+      margin-bottom: 8px;
+    }
+
+    &-status {
+      position: relative;
+      left: -3px;
+      margin: -4px; // Increase hover-able area for better tooltip usability
+      padding: 4px;
+      cursor: help;
+    }
+
+    &-name {
+      margin-left: 5px;
+    }
+  }
+
+  &__jobs {
+    list-style-type: none;
+  }
+
+  &__job {
+    padding: 9px 16px 9px 12px;
+    border: 1px solid #e1e4e8;
+    background-color: #fff;
+
+    & + & {
+      border-top: none;
+    }
+
+    &:first-child {
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    &-status {
+      margin: -4px; // Increase hover-able area for better tooltip usability
+      padding: 4px;
+      cursor: help;
+    }
+
+    &-number {
+      margin-left: 8px;
+    }
+
+    &-details {
+      margin-left: auto;
+
+      &--disabled {
+        color: #c8c9cb;
+        cursor: default;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
 }
