@@ -63,4 +63,4 @@ export class ExtensionBackground {
 }
 
 // Run
-const background: ExtensionBackground = new ExtensionBackground();
+new ExtensionBackground();

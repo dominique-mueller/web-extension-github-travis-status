@@ -36,7 +36,7 @@ export class ExtensionContentScript {
     this.pollingInterval = pollingInterval;
 
     // Re-render every time the pull merging partial gets re-rendered
-    this.pullMergingPartialMutationObserver = new MutationObserver((mutations: Array<MutationRecord>): void => {
+    this.pullMergingPartialMutationObserver = new MutationObserver((): void => {
       this.cleanup();
       this.init();
     });
@@ -104,7 +104,7 @@ export class ExtensionContentScript {
    * @returns         - Promise, resolving with Travis CI build details
    */
   private fetchBuildDetails(buildId: number): Promise<TravisCiBuild> {
-    return new Promise((resolve: (stages: TravisCiBuild) => void, reject: () => void) => {
+    return new Promise((resolve: (stages: TravisCiBuild) => void) => {
       chrome.runtime.sendMessage(
         {
           buildId,
@@ -127,4 +127,4 @@ export class ExtensionContentScript {
 }
 
 // Run
-const contentScript: ExtensionContentScript = new ExtensionContentScript();
+new ExtensionContentScript();
